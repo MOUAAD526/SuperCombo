@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comp Analyzer - Super Combinator Tools</title>
+    <!-- Favicon - Lightning bolt icon matching the app branding -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6'/%3E%3Cstop offset='100%25' style='stop-color:%236366f1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='6' fill='url(%23g)'/%3E%3Cpath d='M17.5 6L10 17h5.5l-1 9L22 15h-5.5l1-9z' fill='white'/%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: ['class', '[data-mode="dark"]'],
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd',
+                            400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9',
+                            800: '#5b21b6', 900: '#4c1d95'
+                        }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --brand: #8b5cf6;
+            --brand-light: #a78bfa;
+            --teal: #14b8a6;
+            --teal-light: #2dd4bf;
+            --orange: #f97316;
+            --orange-light: #fb923c;
+
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-mode="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--bg-secondary);
+            padding: 24px 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--brand), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: var(--brand);
+            color: white;
+            border-color: var(--brand);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        .glass-panel {
+            background: var(--bg-secondary);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        .control-panel {
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brand), var(--brand-light));
+            color: white;
+            width: 100%;
+            box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -4px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .filters-section {
+            background: var(--bg-primary);
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 18px;
+            border: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .stat-value.small {
+            font-size: 18px;
+        }
+
+        .ce-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+
+        .ce-badge.strong {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .ce-badge.good {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .ce-badge.moderate {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .ce-badge.weak {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .comps-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .comps-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .comps-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .comps-table tr:hover {
+            background: var(--bg-primary);
+        }
+
+        .domain-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .similarity-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .similarity-progress {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .similarity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand), var(--teal));
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .similarity-score {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 12px;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        .chip {
+            padding: 3px 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .chip.rm {
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+
+        .chip.ep {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .chip.wave {
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+
+        .chip.noun {
+            border-color: var(--text-muted);
+            color: var(--text-muted);
+        }
+
+        .keyword-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .anchor-prices {
+            background: var(--bg-primary);
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .anchor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .anchor-item:last-child {
+            border-bottom: none;
+        }
+
+        .anchor-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .anchor-value {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .export-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .category-manager {
+            background: var(--bg-primary);
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 18px;
+            border: 1px solid var(--border);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            max-width: 480px;
+            width: 90%;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        .loading-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--brand);
+        }
+
+        .loading-indicator.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-secondary);
+            padding: 14px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body data-mode="light">
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🎯 Comp Analyzer</h1>
+                <p>Data-driven comparable domain sales analysis</p>
+            </div>
+            <a href="../Super Combinator V6.0.htm" class="back-link">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Combinator
+            </a>
+        </div>
+
+        <div class="main-grid">
+            <!-- Control Panel -->
+            <div class="glass-panel control-panel">
+                <div class="section-title">Domain Analysis</div>
+
+                <div class="input-group">
+                    <label>Domain Name</label>
+                    <input type="text" id="domainInput" placeholder="e.g., trustworkflows.com">
+                </div>
+
+                <div class="input-group">
+                    <label>Max Results</label>
+                    <input type="number" id="maxResults" value="30" min="1" max="100">
+                </div>
+
+                <div class="input-group">
+                    <label>Min Similarity</label>
+                    <input type="range" id="minSimilarity" min="0" max="100" value="30"
+                        oninput="document.getElementById('simValue').textContent = this.value">
+                    <div style="text-align: right; font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                        <span id="simValue">30</span>%
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="findComps()">
+                    🔍 Find Comparables
+                </button>
+
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <span>Analyzing comparables...</span>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-section">
+                    <div class="section-title">Advanced Filters</div>
+
+                    <div class="input-group">
+                        <label>Year Range</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="yearMin" placeholder="Min" style="width: 50%;">
+                            <input type="number" id="yearMax" placeholder="Max" style="width: 50%;">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Price Range ($)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="priceMin" placeholder="Min" style="width: 50%;">
+                            <input type="number" id="priceMax" placeholder="Max" style="width: 50%;">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>TLD Filter</label>
+                        <select id="tldFilter">
+                            <option value="">All TLDs</option>
+                            <option value="com">.com</option>
+                            <option value="ai">.ai</option>
+                            <option value="io">.io</option>
+                            <option value="co">.co</option>
+                            <option value="net">.net</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Category Filter</label>
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="rm">Finance/Revenue (RM)</option>
+                            <option value="ep">Trust/Security (EP)</option>
+                            <option value="wave">AI/Tech (Wave)</option>
+                            <option value="noun">Platform/Product</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Category Manager -->
+                <div class="category-manager">
+                    <div class="section-title">Category Manager</div>
+                    <button class="btn btn-secondary" onclick="openCategoryModal()"
+                        style="width: 100%; margin-bottom: 10px;">
+                        ➕ Add Custom Category
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportCategories()" style="width: 100%;">
+                        📥 Export Keywords
+                    </button>
+                </div>
+
+                <!-- Data Upload -->
+                <div class="input-group" style="margin-top: 18px;">
+                    <label>Load Sales Data (CSV)</label>
+                    <input type="file" id="csvUpload" accept=".csv" onchange="loadCSVData(event)">
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="glass-panel">
+                <div id="resultsContent">
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">No Results Yet</h3>
+                        <p>Enter a domain name, load a sales CSV, and click "Find Comparables"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Add Custom Category</div>
+
+            <div class="input-group">
+                <label>Category Name</label>
+                <input type="text" id="newCategoryName" placeholder="e.g., healthcare">
+            </div>
+
+            <div class="input-group">
+                <label>Keywords (comma-separated)</label>
+                <textarea id="newCategoryKeywords" rows="4"
+                    placeholder="e.g., health, medical, hospital, clinic"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Category Type</label>
+                <select id="newCategoryType">
+                    <option value="rm">Finance/Revenue (RM)</option>
+                    <option value="ep">Trust/Security (EP)</option>
+                    <option value="wave">AI/Tech (Wave)</option>
+                    <option value="noun">Platform/Product</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeCategoryModal()">Cancel</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="addCustomCategory()">Add Category</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // ==================== DATA STRUCTURES ====================
+
+        let salesData = [];
+        let keywordDict = {};
+        let customCategories = [];
+        let pendingDomain = null; // Store domain from URL param for auto-run
+
+        // Initialize with comprehensive keyword dictionary
+        function initializeKeywords() {
+            keywordDict = {
+                // Finance/Money (RM)
+                'price': { variants: ['price', 'pricing', 'priced', 'prices'], type: 'rm' },
+                'yield': { variants: ['yield', 'yields', 'yielding'], type: 'rm' },
+                'cash': { variants: ['cash', 'cashflow'], type: 'rm' },
+                'portfolio': { variants: ['portfolio', 'portfolios'], type: 'rm' },
+                'signal': { variants: ['signal', 'signals', 'signaling'], type: 'rm' },
+                'revenue': { variants: ['revenue', 'revenues'], type: 'rm' },
+                'profit': { variants: ['profit', 'profits', 'profitable'], type: 'rm' },
+                'margin': { variants: ['margin', 'margins'], type: 'rm' },
+                'dollar': { variants: ['dollar', 'dollars'], type: 'rm' },
+                'finance': { variants: ['finance', 'financial', 'financing', 'finances'], type: 'rm' },
+                'payment': { variants: ['payment', 'payments', 'pay', 'paying'], type: 'rm' },
+                'credit': { variants: ['credit', 'credits'], type: 'rm' },
+                'debt': { variants: ['debt', 'debts'], type: 'rm' },
+                'loan': { variants: ['loan', 'loans', 'lending'], type: 'rm' },
+                'invest': { variants: ['invest', 'investing', 'investment', 'investor'], type: 'rm' },
+                'trading': { variants: ['trade', 'trading', 'trader'], type: 'rm' },
+                'wealth': { variants: ['wealth', 'wealthy'], type: 'rm' },
+                'capital': { variants: ['capital'], type: 'rm' },
+                'treasury': { variants: ['treasury'], type: 'rm' },
+                'ledger': { variants: ['ledger'], type: 'rm' },
+                'invoice': { variants: ['invoice', 'invoicing', 'invoices'], type: 'rm' },
+                'budget': { variants: ['budget', 'budgeting'], type: 'rm' },
+                'fund': { variants: ['fund', 'funds', 'funding'], type: 'rm' },
+                'equity': { variants: ['equity'], type: 'rm' },
+                'asset': { variants: ['asset', 'assets'], type: 'rm' },
+                'lender': { variants: ['lender', 'lenders', 'lending'], type: 'rm' },
+                'ads': { variants: ['ads', 'ad', 'advertising'], type: 'rm' },
+
+                // Crypto/Web3
+                'crypto': { variants: ['crypto', 'cryptocurrency'], type: 'wave' },
+                'bitcoin': { variants: ['bitcoin', 'btc'], type: 'wave' },
+                'nft': { variants: ['nft', 'nfts'], type: 'wave' },
+                'defi': { variants: ['defi'], type: 'wave' },
+                'web3': { variants: ['web3'], type: 'wave' },
+                'blockchain': { variants: ['blockchain', 'chain'], type: 'wave' },
+                'token': { variants: ['token', 'tokens', 'tokenize'], type: 'wave' },
+                'wallet': { variants: ['wallet', 'wallets'], type: 'wave' },
+
+                // Trust/Security/Identity (UV/EP)
+                'trust': { variants: ['trust', 'trusted', 'trusting', 'trusts'], type: 'ep' },
+                'verify': { variants: ['verify', 'verified', 'verifying', 'verification'], type: 'ep' },
+                'secure': { variants: ['secure', 'secured', 'security'], type: 'ep' },
+                'fraud': { variants: ['fraud', 'fraudulent'], type: 'ep' },
+                'identity': { variants: ['identity', 'identities'], type: 'ep' },
+                'compliance': { variants: ['compliance', 'compliant', 'comply'], type: 'ep' },
+                'audit': { variants: ['audit', 'auditing', 'auditor'], type: 'ep' },
+                'privacy': { variants: ['privacy', 'private'], type: 'ep' },
+                'safe': { variants: ['safe', 'safety'], type: 'ep' },
+                'protect': { variants: ['protect', 'protection', 'protective'], type: 'ep' },
+                'auth': { variants: ['auth', 'authentication', 'authenticate'], type: 'ep' },
+                'proof': { variants: ['proof', 'proven', 'prove'], type: 'ep' },
+                'kyc': { variants: ['kyc'], type: 'ep' },
+                'kyb': { variants: ['kyb'], type: 'ep' },
+                'aml': { variants: ['aml'], type: 'ep' },
+                'access': { variants: ['access', 'accessible'], type: 'ep' },
+                'guard': { variants: ['guard', 'guardian'], type: 'ep' },
+                'shield': { variants: ['shield'], type: 'ep' },
+                'vault': { variants: ['vault'], type: 'ep' },
+
+                // AI/ML/Tech (Wave)
+                'ai': { variants: ['ai'], type: 'wave' },
+                'neural': { variants: ['neural'], type: 'wave' },
+                'agent': { variants: ['agent', 'agents', 'agentical'], type: 'wave' },
+                'bot': { variants: ['bot', 'bots', 'robot', 'robotic'], type: 'wave' },
+                'machine': { variants: ['machine'], type: 'wave' },
+                'learning': { variants: ['learning', 'learn'], type: 'wave' },
+                'data': { variants: ['data'], type: 'wave' },
+                'analytics': { variants: ['analytics', 'analyze', 'analysis'], type: 'wave' },
+                'intelligence': { variants: ['intelligence', 'intelligent'], type: 'wave' },
+                'smart': { variants: ['smart'], type: 'wave' },
+                'auto': { variants: ['auto', 'automation', 'automated', 'automatic'], type: 'wave' },
+                'cognitive': { variants: ['cognitive'], type: 'wave' },
+                'vision': { variants: ['vision'], type: 'wave' },
+                'voice': { variants: ['voice'], type: 'wave' },
+                'chat': { variants: ['chat', 'chatbot'], type: 'wave' },
+                'predict': { variants: ['predict', 'prediction', 'predictive'], type: 'wave' },
+
+                // Platform/Product (Nouns)
+                'platform': { variants: ['platform', 'platforms'], type: 'noun' },
+                'workflow': { variants: ['workflow', 'workflows'], type: 'noun' },
+                'system': { variants: ['system', 'systems'], type: 'noun' },
+                'engine': { variants: ['engine', 'engines'], type: 'noun' },
+                'hub': { variants: ['hub', 'hubs'], type: 'noun' },
+                'lab': { variants: ['lab', 'labs', 'laboratory'], type: 'noun' },
+                'stack': { variants: ['stack', 'stacks'], type: 'noun' },
+                'cloud': { variants: ['cloud'], type: 'noun' },
+                'api': { variants: ['api', 'apis'], type: 'noun' },
+                'app': { variants: ['app', 'apps', 'application'], type: 'noun' },
+                'tool': { variants: ['tool', 'tools'], type: 'noun' },
+                'software': { variants: ['software'], type: 'noun' },
+                'solution': { variants: ['solution', 'solutions'], type: 'noun' },
+                'service': { variants: ['service', 'services'], type: 'noun' },
+                'network': { variants: ['network', 'networking'], type: 'noun' },
+                'infrastructure': { variants: ['infrastructure'], type: 'noun' },
+
+                // Business Operations
+                'monitor': { variants: ['monitor', 'monitoring'], type: 'noun' },
+                'deploy': { variants: ['deploy', 'deployment'], type: 'noun' },
+                'execute': { variants: ['execute', 'execution'], type: 'noun' },
+                'operate': { variants: ['operate', 'operations', 'ops'], type: 'noun' },
+                'manage': { variants: ['manage', 'management', 'manager'], type: 'noun' },
+                'control': { variants: ['control', 'controls', 'controller'], type: 'noun' },
+                'optimize': { variants: ['optimize', 'optimization', 'optimizer'], type: 'noun' },
+                'automate': { variants: ['automate', 'automation'], type: 'noun' },
+
+                // Other
+                'health': { variants: ['health', 'healthcare'], type: 'other' },
+                'legal': { variants: ['legal'], type: 'other' },
+                'insurance': { variants: ['insurance'], type: 'other' },
+                'medical': { variants: ['medical', 'medicine'], type: 'other' },
+                'education': { variants: ['education', 'educational'], type: 'other' },
+                'real': { variants: ['real', 'reality'], type: 'other' },
+                'virtual': { variants: ['virtual'], type: 'other' },
+                'digital': { variants: ['digital'], type: 'other' },
+                'online': { variants: ['online'], type: 'other' },
+                'mobile': { variants: ['mobile'], type: 'other' },
+                'enterprise': { variants: ['enterprise'], type: 'other' },
+                'business': { variants: ['business'], type: 'other' },
+                'market': { variants: ['market', 'marketplace', 'marketing'], type: 'other' },
+                'customer': { variants: ['customer', 'customers'], type: 'other' },
+                'user': { variants: ['user', 'users'], type: 'other' },
+            };
+        }
+
+        // ==================== TOAST NOTIFICATIONS ====================
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ==================== KEYWORD EXTRACTION ====================
+
+        function extractKeywords(name) {
+            const keywords = new Set();
+            const nameLower = name.toLowerCase();
+
+            for (const [baseKeyword, data] of Object.entries(keywordDict)) {
+                for (const variant of data.variants) {
+                    if (nameLower.includes(variant)) {
+                        keywords.add(baseKeyword);
+                        break;
+                    }
+                }
+            }
+
+            if (name.includes('-')) {
+                const parts = name.split('-');
+                for (const part of parts) {
+                    if (part.length >= 3) {
+                        for (const [baseKeyword, data] of Object.entries(keywordDict)) {
+                            for (const variant of data.variants) {
+                                if (part.toLowerCase() === variant) {
+                                    keywords.add(baseKeyword);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return Array.from(keywords);
+        }
+
+        function getKeywordType(keyword) {
+            return keywordDict[keyword]?.type || 'other';
+        }
+
+        // ==================== STRUCTURE CLASSIFICATION ====================
+
+        function getStructureType(name, tld) {
+            const cleaned = name.replace(/[-_]/g, '');
+            const length = cleaned.length;
+
+            const wordBreaks = (name.match(/[A-Z]/g) || []).length +
+                (name.match(/[-_]/g) || []).length +
+                (name.match(/\d+/g) || []).length;
+
+            if (name.match(/\d/)) {
+                return 'numeric';
+            } else if (name.includes('-')) {
+                return 'hyphenated';
+            } else if (wordBreaks >= 2 || length > 20) {
+                return 'compound_3plus';
+            } else if (wordBreaks === 1 || (length > 8 && length <= 20)) {
+                return 'compound_2word';
+            } else if (length <= 8) {
+                return 'single_premium';
+            } else {
+                return 'single_word';
+            }
+        }
+
+        // ==================== SIMILARITY CALCULATION ====================
+
+        function calculateSimilarity(target, comp) {
+            const targetKw = new Set(extractKeywords(target.name));
+            const compKw = new Set(extractKeywords(comp.name));
+            const targetStruct = getStructureType(target.name, target.tld);
+            const compStruct = getStructureType(comp.name, comp.tld);
+
+            let score = 0;
+            const breakdown = {};
+
+            // Token similarity (0-30)
+            if (targetKw.size > 0 && compKw.size > 0) {
+                const common = new Set([...targetKw].filter(x => compKw.has(x)));
+                const union = new Set([...targetKw, ...compKw]);
+                const jaccard = common.size / union.size;
+
+                if (common.size > 0) {
+                    breakdown.token = 15 + (jaccard * 15);
+                } else {
+                    breakdown.token = 5;
+                }
+            } else {
+                breakdown.token = 0;
+            }
+            score += breakdown.token;
+
+            // Structure (0-20)
+            if (targetStruct === compStruct) {
+                breakdown.structure = 20;
+            } else if ((targetStruct === 'single_premium' || targetStruct === 'single_word') &&
+                (compStruct === 'single_premium' || compStruct === 'single_word')) {
+                breakdown.structure = 15;
+            } else {
+                breakdown.structure = 5;
+            }
+            score += breakdown.structure;
+
+            // TLD (0-15)
+            if (target.tld === comp.tld) {
+                breakdown.tld = 15;
+            } else if ((target.tld === 'com' && ['co', 'net'].includes(comp.tld)) ||
+                (comp.tld === 'com' && ['co', 'net'].includes(target.tld))) {
+                breakdown.tld = 10;
+            } else {
+                breakdown.tld = 3;
+            }
+            score += breakdown.tld;
+
+            // Length (0-10)
+            const lengthDiff = Math.abs(target.name.length - comp.name.length);
+            breakdown.length = Math.max(0, 10 - lengthDiff);
+            score += breakdown.length;
+
+            // Timing (0-15)
+            if (comp.year) {
+                if (comp.year >= 2023) {
+                    breakdown.timing = 15;
+                } else if (comp.year >= 2020) {
+                    breakdown.timing = 10;
+                } else {
+                    breakdown.timing = 5;
+                }
+            } else {
+                breakdown.timing = 5;
+            }
+            score += breakdown.timing;
+
+            // Industry (0-10)
+            if (targetKw.size > 0 && compKw.size > 0) {
+                const targetTypes = new Set([...targetKw].map(k => getKeywordType(k)));
+                const compTypes = new Set([...compKw].map(k => getKeywordType(k)));
+
+                const typeOverlap = new Set([...targetTypes].filter(x => compTypes.has(x)));
+                if (typeOverlap.size > 0) {
+                    breakdown.industry = 10;
+                } else {
+                    breakdown.industry = 3;
+                }
+            } else {
+                breakdown.industry = 0;
+            }
+            score += breakdown.industry;
+
+            breakdown.total = Math.round(score);
+
+            return { score: breakdown.total, breakdown };
+        }
+
+        // ==================== MAIN COMP FINDER ====================
+
+        function findComps() {
+            const domainInput = document.getElementById('domainInput').value.trim();
+            if (!domainInput) {
+                showToast('Please enter a domain name');
+                return;
+            }
+
+            if (salesData.length === 0) {
+                showToast('Please load sales data first using the CSV upload');
+                return;
+            }
+
+            document.getElementById('loadingIndicator').classList.add('active');
+
+            // Use setTimeout to allow UI update
+            setTimeout(() => {
+                // Parse input domain
+                const parts = domainInput.toLowerCase().split('.');
+                const name = parts[0];
+                const tld = parts[1] || 'com';
+                const target = { domain: `${name}.${tld}`, name, tld };
+
+                // Get parameters
+                const maxResults = parseInt(document.getElementById('maxResults').value) || 30;
+                const minSimilarity = parseInt(document.getElementById('minSimilarity').value) || 30;
+
+                // Get filters
+                const yearMin = parseInt(document.getElementById('yearMin').value) || 0;
+                const yearMax = parseInt(document.getElementById('yearMax').value) || 9999;
+                const priceMin = parseFloat(document.getElementById('priceMin').value) || 0;
+                const priceMax = parseFloat(document.getElementById('priceMax').value) || Infinity;
+                const tldFilter = document.getElementById('tldFilter').value;
+                const categoryFilter = document.getElementById('categoryFilter').value;
+
+                // Calculate similarities
+                const similarities = [];
+
+                for (const comp of salesData) {
+                    if (comp.name === name && comp.tld === tld) continue;
+
+                    if (comp.year && (comp.year < yearMin || comp.year > yearMax)) continue;
+                    if (comp.price < priceMin || comp.price > priceMax) continue;
+                    if (tldFilter && comp.tld !== tldFilter) continue;
+
+                    if (categoryFilter) {
+                        const compKeywords = extractKeywords(comp.name);
+                        const compTypes = compKeywords.map(k => getKeywordType(k));
+                        if (!compTypes.includes(categoryFilter)) continue;
+                    }
+
+                    const { score, breakdown } = calculateSimilarity(target, comp);
+
+                    if (score >= minSimilarity) {
+                        similarities.push({
+                            ...comp,
+                            similarity: score,
+                            breakdown
+                        });
+                    }
+                }
+
+                similarities.sort((a, b) => b.similarity - a.similarity);
+                const topComps = similarities.slice(0, maxResults);
+
+                const result = {
+                    target,
+                    comps: topComps,
+                    statistics: null,
+                    anchors: null,
+                    compStrength: 'NONE',
+                    ceScore: 0
+                };
+
+                if (topComps.length > 0) {
+                    const prices = topComps.map(c => c.price);
+                    const weights = topComps.map(c => c.similarity);
+                    const weightedPrices = prices.map((p, i) => p * weights[i]);
+                    const weightedMean = weightedPrices.reduce((a, b) => a + b, 0) / weights.reduce((a, b) => a + b, 0);
+
+                    prices.sort((a, b) => a - b);
+
+                    result.statistics = {
+                        count: topComps.length,
+                        min: Math.min(...prices),
+                        max: Math.max(...prices),
+                        median: prices[Math.floor(prices.length / 2)],
+                        mean: prices.reduce((a, b) => a + b, 0) / prices.length,
+                        weightedMean: weightedMean,
+                        p25: prices[Math.floor(prices.length * 0.25)],
+                        p50: prices[Math.floor(prices.length * 0.5)],
+                        p75: prices[Math.floor(prices.length * 0.75)],
+                        p90: prices[Math.floor(prices.length * 0.9)]
+                    };
+
+                    result.anchors = {
+                        floor: result.statistics.p50,
+                        target: result.statistics.p75,
+                        stretch: result.statistics.p90,
+                        aggressive: result.statistics.max
+                    };
+
+                    const highSimCount = topComps.filter(c => c.similarity >= 70).length;
+                    const medSimCount = topComps.filter(c => c.similarity >= 50 && c.similarity < 70).length;
+
+                    if (highSimCount >= 5) {
+                        result.compStrength = 'STRONG';
+                        result.ceScore = 9;
+                    } else if (highSimCount >= 3 || medSimCount >= 8) {
+                        result.compStrength = 'GOOD';
+                        result.ceScore = 7;
+                    } else if (highSimCount >= 1 || medSimCount >= 5) {
+                        result.compStrength = 'MODERATE';
+                        result.ceScore = 5;
+                    } else if (topComps.length >= 5) {
+                        result.compStrength = 'WEAK';
+                        result.ceScore = 3;
+                    } else {
+                        result.compStrength = 'VERY_WEAK';
+                        result.ceScore = 2;
+                    }
+                }
+
+                document.getElementById('loadingIndicator').classList.remove('active');
+                displayResults(result);
+            }, 100);
+        }
+
+        // ==================== RESULTS DISPLAY ====================
+
+        function displayResults(result) {
+            const container = document.getElementById('resultsContent');
+
+            if (!result.statistics) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">No Comparables Found</h3>
+                        <p>Try adjusting the minimum similarity threshold or filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const targetKeywords = extractKeywords(result.target.name);
+            const keywordChips = targetKeywords.map(kw => {
+                const type = getKeywordType(kw);
+                return `<span class="chip ${type}">${kw}</span>`;
+            }).join('');
+
+            const ceClass = result.compStrength.toLowerCase().replace('_', '-');
+
+            let html = `
+                <div style="margin-bottom: 28px;">
+                    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 10px;">
+                        ${result.target.domain}
+                    </h2>
+                    <div class="keyword-chips">${keywordChips}</div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Comp Evidence</div>
+                        <div class="stat-value small">${result.ceScore}/10</div>
+                        <span class="ce-badge ${ceClass}">${result.compStrength}</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Comparables</div>
+                        <div class="stat-value">${result.comps.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg Similarity</div>
+                        <div class="stat-value">${Math.round(result.comps.reduce((a, c) => a + c.similarity, 0) / result.comps.length)}%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Median Price</div>
+                        <div class="stat-value small">$${result.statistics.median.toLocaleString()}</div>
+                    </div>
+                </div>
+
+                <div class="anchor-prices">
+                    <div style="font-weight: 700; margin-bottom: 14px; color: var(--text-primary);">
+                        📊 Pricing Anchors
+                    </div>
+                    <div class="anchor-item">
+                        <span class="anchor-label">Floor (P50)</span>
+                        <span class="anchor-value">$${result.anchors.floor.toLocaleString()}</span>
+                    </div>
+                    <div class="anchor-item">
+                        <span class="anchor-label">Target (P75)</span>
+                        <span class="anchor-value">$${result.anchors.target.toLocaleString()}</span>
+                    </div>
+                    <div class="anchor-item">
+                        <span class="anchor-label">Stretch (P90)</span>
+                        <span class="anchor-value">$${result.anchors.stretch.toLocaleString()}</span>
+                    </div>
+                    <div class="anchor-item">
+                        <span class="anchor-label">Aggressive (Max)</span>
+                        <span class="anchor-value">$${result.anchors.aggressive.toLocaleString()}</span>
+                    </div>
+                </div>
+
+                <div class="export-options">
+                    <button class="btn btn-secondary" onclick="exportToCSV()">
+                        📥 Export to CSV
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportReport()">
+                        📄 Export Report
+                    </button>
+                </div>
+
+                <h3 style="margin-top: 36px; margin-bottom: 18px; font-size: 16px; font-weight: 700;">
+                    📋 Comparable Sales
+                </h3>
+                
+                <table class="comps-table">
+                    <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Price</th>
+                            <th>Year</th>
+                            <th>Similarity</th>
+                            <th>Keywords</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (const comp of result.comps) {
+                const compKeywords = extractKeywords(comp.name);
+                const compChips = compKeywords.slice(0, 3).map(kw => {
+                    const type = getKeywordType(kw);
+                    return `<span class="chip ${type}">${kw}</span>`;
+                }).join('');
+
+                html += `
+                    <tr onclick="showBreakdown(${JSON.stringify(comp.breakdown).replace(/"/g, '&quot;')})">
+                        <td><span class="domain-name">${comp.domain}</span></td>
+                        <td>$${comp.price.toLocaleString()}</td>
+                        <td>${comp.year || 'N/A'}</td>
+                        <td>
+                            <div class="similarity-bar">
+                                <div class="similarity-progress">
+                                    <div class="similarity-fill" style="width: ${comp.similarity}%"></div>
+                                </div>
+                                <span class="similarity-score">${comp.similarity}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                ${compChips}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+            window.currentResult = result;
+        }
+
+        function showBreakdown(breakdown) {
+            showToast(`Similarity: Token ${breakdown.token.toFixed(0)}/30, Structure ${breakdown.structure}/20, TLD ${breakdown.tld}/15, Total ${breakdown.total}/100`);
+        }
+
+        // ==================== CSV DATA LOADING ====================
+
+        function loadCSVData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const text = e.target.result;
+                parseCSV(text);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+
+            salesData = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const values = line.split(',');
+
+                try {
+                    const domain = values[0].toLowerCase().trim();
+                    const priceStr = values[1].replace(/[^0-9.-]/g, '');
+                    const price = parseFloat(priceStr);
+                    const dateStr = values[2];
+
+                    const parts = domain.split('.');
+                    const name = parts[0];
+                    const tld = parts[1] || 'com';
+
+                    let year = null;
+                    if (dateStr) {
+                        const match = dateStr.match(/(\d{4})/);
+                        if (match) year = parseInt(match[1]);
+                    }
+
+                    if (name && !isNaN(price)) {
+                        salesData.push({
+                            domain,
+                            name,
+                            tld,
+                            price,
+                            year,
+                            date: dateStr
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error parsing line:', line, e);
+                }
+            }
+
+            showToast(`Loaded ${salesData.length} domain sales records`);
+
+            // Auto-run if we have a pending domain from URL param
+            if (pendingDomain && salesData.length > 0) {
+                setTimeout(() => {
+                    findComps();
+                    pendingDomain = null;
+                }, 300);
+            }
+        }
+
+        // ==================== CATEGORY MANAGEMENT ====================
+
+        function openCategoryModal() {
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+        }
+
+        function addCustomCategory() {
+            const name = document.getElementById('newCategoryName').value.trim();
+            const keywordsStr = document.getElementById('newCategoryKeywords').value.trim();
+            const type = document.getElementById('newCategoryType').value;
+
+            if (!name || !keywordsStr) {
+                showToast('Please enter both category name and keywords');
+                return;
+            }
+
+            const variants = keywordsStr.split(',').map(k => k.trim().toLowerCase());
+
+            keywordDict[name] = {
+                variants: variants,
+                type: type
+            };
+
+            customCategories.push({ name, variants, type });
+
+            showToast(`Category "${name}" added successfully!`);
+            closeCategoryModal();
+
+            document.getElementById('newCategoryName').value = '';
+            document.getElementById('newCategoryKeywords').value = '';
+        }
+
+        function exportCategories() {
+            let text = 'Category,Keywords,Type\n';
+
+            for (const [name, data] of Object.entries(keywordDict)) {
+                text += `${name},"${data.variants.join(', ')}",${data.type}\n`;
+            }
+
+            downloadFile('keyword_categories.csv', text);
+        }
+
+        // ==================== EXPORT FUNCTIONS ====================
+
+        function exportToCSV() {
+            if (!window.currentResult || !window.currentResult.comps) {
+                showToast('No results to export');
+                return;
+            }
+
+            let csv = 'Domain,Price,Year,Similarity,Token,Structure,TLD,Length,Timing,Industry\n';
+
+            for (const comp of window.currentResult.comps) {
+                csv += `${comp.domain},${comp.price},${comp.year || ''},${comp.similarity},` +
+                    `${comp.breakdown.token.toFixed(1)},${comp.breakdown.structure},` +
+                    `${comp.breakdown.tld},${comp.breakdown.length},` +
+                    `${comp.breakdown.timing},${comp.breakdown.industry}\n`;
+            }
+
+            downloadFile('comp_analysis.csv', csv);
+        }
+
+        function exportReport() {
+            if (!window.currentResult) {
+                showToast('No results to export');
+                return;
+            }
+
+            const r = window.currentResult;
+
+            let report = `COMP SIMILARITY ANALYSIS REPORT\n`;
+            report += `Generated: ${new Date().toLocaleString()}\n\n`;
+            report += `TARGET DOMAIN: ${r.target.domain}\n`;
+            report += `Keywords: ${extractKeywords(r.target.name).join(', ')}\n\n`;
+            report += `COMP EVIDENCE SCORE: ${r.ceScore}/10 (${r.compStrength})\n\n`;
+            report += `STATISTICS:\n`;
+            report += `  Comparables Found: ${r.comps.length}\n`;
+            report += `  Price Range: $${r.statistics.min.toLocaleString()} - $${r.statistics.max.toLocaleString()}\n`;
+            report += `  Median Price: $${r.statistics.median.toLocaleString()}\n`;
+            report += `  Mean Price: $${r.statistics.mean.toLocaleString()}\n`;
+            report += `  Weighted Mean: $${r.statistics.weightedMean.toLocaleString()}\n\n`;
+            report += `PRICING ANCHORS:\n`;
+            report += `  Floor (P50):    $${r.anchors.floor.toLocaleString()}\n`;
+            report += `  Target (P75):   $${r.anchors.target.toLocaleString()}\n`;
+            report += `  Stretch (P90):  $${r.anchors.stretch.toLocaleString()}\n`;
+            report += `  Aggressive:     $${r.anchors.aggressive.toLocaleString()}\n\n`;
+            report += `TOP COMPARABLES:\n\n`;
+
+            for (let i = 0; i < Math.min(10, r.comps.length); i++) {
+                const comp = r.comps[i];
+                report += `${i + 1}. ${comp.domain}\n`;
+                report += `   Price: $${comp.price.toLocaleString()} | Year: ${comp.year || 'N/A'} | Similarity: ${comp.similarity}%\n`;
+                report += `   Keywords: ${extractKeywords(comp.name).join(', ')}\n\n`;
+            }
+
+            downloadFile('comp_report.txt', report);
+        }
+
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ==================== INITIALIZATION ====================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeKeywords();
+
+            // Check for domain in URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const domainParam = urlParams.get('d');
+
+            if (domainParam) {
+                document.getElementById('domainInput').value = domainParam;
+                pendingDomain = domainParam;
+                showToast(`Domain "${domainParam}" loaded. Upload CSV to analyze.`);
+            }
+
+            console.log('Comp Analyzer initialized');
+            console.log(`Loaded ${Object.keys(keywordDict).length} keyword categories`);
+        });
+
+        // Close modal on outside click
+        document.getElementById('categoryModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeCategoryModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

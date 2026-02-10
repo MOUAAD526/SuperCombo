@@ -2744,6 +2744,42 @@
         <div class="toast-msg">Action successful</div>
     </div>
 
+
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js">
+        function initIdentity() {
+            if (!window.netlifyIdentity) {
+                console.error("Netlify Identity widget not loaded. Check the script tag.");
+                return;
+            }
+
+            window.netlifyIdentity.on("init", user => {
+                // TODO: call your existing UI update function here
+                // updateUI(user);
+            });
+
+            window.netlifyIdentity.on("login", user => {
+                window.netlifyIdentity.close();
+                // updateUI(user);
+            });
+
+            window.netlifyIdentity.on("logout", () => {
+                // updateUI(null);
+            });
+
+            window.netlifyIdentity.init();
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initIdentity);
+        } else {
+            initIdentity();
+        }
+
+    </script>
+
+
+
+
     <script>
         // ═══════════════════════════════════════════
         // STATE
@@ -4736,16 +4772,16 @@
 
                 if (index >= 0) {
                     select.value = index;
-                    onPresetSelectChange();
+                    onPresetSelectChange(true);
                 } else if (select.options.length > 0) {
                     select.value = 0;
-                    onPresetSelectChange();
+                    onPresetSelectChange(true);
                 }
             } else {
                 // Default to first
                 if (select.options.length > 0) {
                     select.value = 0;
-                    onPresetSelectChange();
+                    onPresetSelectChange(true);
                 }
             }
         }
@@ -4768,17 +4804,17 @@
             }
         }
 
-        function onPresetSelectChange() {
+        function onPresetSelectChange(silent = false) {
             const select = $('autoPresetSelect');
             if (!select) return; // Element doesn't exist, skip
             const idx = select.value;
             if (idx === '') return;
             const presets = getAutoPresets();
             const preset = presets[idx];
-            if (preset) applyAutoPreset(preset);
+            if (preset) applyAutoPreset(preset, silent);
         }
 
-        function applyAutoPreset(preset) {
+        function applyAutoPreset(preset, silent = false) {
             if (!preset) return;
 
             // Helper for safe property setting
@@ -4817,7 +4853,7 @@
 
             // Ideally should update multipliers list or store for Agent
             // For now, toast
-            toast(`Applied preset: ${preset.name}`);
+            if (!silent) toast(`Applied preset: ${preset.name}`);
         }
 
         // ═══════════════════════════════════════════

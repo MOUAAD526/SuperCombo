@@ -4403,48 +4403,104 @@
             const reader = new FileReader();
             reader.onload = function (ev) {
                 try {
-                    const imported = JSON.parse(ev.target.result);
-                    if (Array.isArray(imported)) {
+                    const json = JSON.parse(ev.target.result);
+                    let packsToProcess = [];
+
+                    // 1. Standard Array: [ {name, words}, ... ]
+                    if (Array.isArray(json)) {
+                        packsToProcess = json;
+                    }
+                    // 2. Object wrapper: { packs: [ ... ] }
+                    else if (json.packs && Array.isArray(json.packs)) {
+                        packsToProcess = json.packs;
+                    }
+                    // 3. Single Pack Object: { name: "X", words: [...] }
+                    else if (typeof json === 'object' && json.name && Array.isArray(json.words)) {
+                        packsToProcess = [json];
+                    }
+                    // 4. Dictionary / Map: { "PackName": ["word1", "word2"], "OtherPack": [...] }
+                    else if (typeof json === 'object') {
+                        // Iterate keys and try to construct packs
+                        Object.entries(json).forEach(([key, val]) => {
+                            if (Array.isArray(val) && val.every(v => typeof v === 'string')) {
+                                packsToProcess.push({ name: key, words: val, type: 'keyword' });
+                            }
+                        });
+
+                        // If that failed, fall back to "smart search" for nested arrays of objects
+                        if (packsToProcess.length === 0) {
+                            const possibleKey = Object.keys(json).find(k => Array.isArray(json[k]) && json[k][0]?.words);
+                            if (possibleKey) packsToProcess = json[possibleKey];
+                        }
+                    }
+
+                    console.log('Found packs to process:', packsToProcess.length, packsToProcess);
+
+                    if (packsToProcess.length > 0) {
                         let mergedCount = 0;
                         let createdCount = 0;
+                        let totalWordsAdded = 0;
 
-                        imported.forEach(p => {
+                        packsToProcess.forEach(p => {
                             if (p.name && p.words && Array.isArray(p.words)) {
-                                // Find existing pack with same name (case-insensitive)
+                                const cleanName = p.name.trim();
+                                // Find existing pack with same name (exclude case sensitivity for matching)
                                 const existingPack = S.packs.find(
-                                    ep => ep.name.toLowerCase() === p.name.toLowerCase()
+                                    ep => ep.name.trim().toLowerCase() === cleanName.toLowerCase()
                                 );
 
                                 if (existingPack) {
-                                    // Merge keywords: combine and deduplicate
-                                    const combined = [...existingPack.words, ...p.words];
-                                    existingPack.words = [...new Set(combined.map(w => w.toLowerCase().trim()))];
-                                    mergedCount++;
+                                    // MERGE
+                                    const oldWords = new Set(existingPack.words.map(w => w.toLowerCase()));
+                                    const newWords = p.words.filter(w => w && typeof w === 'string').map(w => w.trim());
+                                    let addedForThis = 0;
+
+                                    newWords.forEach(w => {
+                                        if (!oldWords.has(w.toLowerCase())) {
+                                            existingPack.words.push(w);
+                                            oldWords.add(w.toLowerCase());
+                                            addedForThis++;
+                                        }
+                                    });
+
+                                    existingPack.words.sort(); // Keep sorted
+
+                                    if (addedForThis > 0) {
+                                        mergedCount++;
+                                        totalWordsAdded += addedForThis;
+                                    }
                                 } else {
-                                    // Create new pack
-                                    p.id = Date.now() + Math.random();
-                                    S.packs.push(p);
+                                    // CREATE
+                                    S.packs.push({
+                                        id: Date.now() + Math.random(),
+                                        name: cleanName,
+                                        type: p.type || 'keyword',
+                                        words: p.words.filter(w => w && typeof w === 'string').map(w => w.trim()).sort()
+                                    });
                                     createdCount++;
+                                    totalWordsAdded += p.words.length;
                                 }
                             }
                         });
+
                         save();
                         refreshAll();
 
-                        // Show summary message
-                        const parts = [];
-                        if (mergedCount > 0) parts.push(`${mergedCount} merged`);
-                        if (createdCount > 0) parts.push(`${createdCount} created`);
-                        toast(parts.length > 0 ? `Packs: ${parts.join(', ')}` : 'No valid packs found');
+                        if (createdCount === 0 && mergedCount === 0) {
+                            toast('No new data found imported (duplicates skipped).');
+                        } else {
+                            toast(`Success! Created ${createdCount}, Merged ${mergedCount}. (+${totalWordsAdded} words)`);
+                        }
                     } else {
-                        toast('Invalid file format', 'err');
+                        toast('No recognizable pack format found.', 'err');
                     }
                 } catch (err) {
-                    toast('Error reading file', 'err');
+                    console.error('Import Error:', err);
+                    toast('Error parsing JSON. Check console.', 'err');
                 }
             };
             reader.readAsText(file);
-            e.target.value = ''; // Reset input
+            e.target.value = ''; // Reset input to allow re-importing same file
         }
 
         function importCSV(e) {
@@ -4559,6 +4615,13 @@
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 const file = files[0];
+
+                // FIX: Detect JSON and route to importPacks
+                if (file.name.toLowerCase().endsWith('.json') || file.type === 'application/json') {
+                    importPacks({ target: { files: [file] } });
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function (ev) {
                     const lines = ev.target.result.split(/[\n\r]+/).map(l => l.trim()).filter(l => l);

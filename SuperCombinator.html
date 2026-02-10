@@ -5377,7 +5377,7 @@
         };
 
         // Update UI based on auth state
-        function updateAuthUI(user) {
+        function updateAuthUI(user, silent = false) {
             const loginBtn = $('loginBtn');
             const userInfo = $('userInfo');
             const userEmail = $('userEmail');
@@ -5395,7 +5395,7 @@
 
                 // Fetch winners from protected API
                 if (!AuthState.winnersLoaded) {
-                    fetchProtectedWinners();
+                    fetchProtectedWinners(silent);
                 }
             } else {
                 // Logged out
@@ -5413,10 +5413,10 @@
         }
 
         // Fetch winners from protected Netlify Function
-        async function fetchProtectedWinners() {
+        async function fetchProtectedWinners(silent = false) {
             const user = netlifyIdentity.currentUser();
             if (!user) {
-                toast('Please log in to view winners', 'err');
+                if (!silent) toast('Please log in to view winners', 'err');
                 return;
             }
 
@@ -5441,7 +5441,7 @@
                 // Render winners to table
                 if (data.winners && Array.isArray(data.winners)) {
                     renderProtectedWinners(data.winners);
-                    toast(`Loaded ${data.winners.length} winners`);
+                    if (!silent) toast(`Loaded ${data.winners.length} winners`);
                 }
             } catch (err) {
                 console.error('Failed to fetch winners:', err);
@@ -5495,7 +5495,7 @@
         if (typeof netlifyIdentity !== 'undefined') {
             // On initial page load
             netlifyIdentity.on('init', user => {
-                updateAuthUI(user);
+                updateAuthUI(user, true); // Silent on init
             });
 
             // On login

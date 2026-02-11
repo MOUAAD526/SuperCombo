@@ -1423,6 +1423,35 @@
                             </div>
                         </div>
 
+                        <!-- Availability Model -->
+                        <div class="glass-panel p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3
+                                    class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-sm uppercase tracking-wider">
+                                    Availability Check
+                                </h3>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="genCheckEnabled"
+                                        class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                                    <span class="text-xs font-normal text-slate-500">Enable</span>
+                                </label>
+                            </div>
+
+                            <div id="genCheckSettings"
+                                class="grid grid-cols-2 gap-3 opacity-50 pointer-events-none transition-opacity">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Target</label>
+                                    <input type="number" id="genTargetResults" value="50" min="1" max="200"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Max Checks</label>
+                                    <input type="number" id="genMaxChecks" value="500" min="50" max="4000"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-brand-500">
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Action -->
                         <div class="glass-panel p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
                             <div class="flex flex-wrap gap-2 mb-4" id="extChips">
@@ -1447,6 +1476,28 @@
 
                     <!-- Results Column - Scrollable -->
                     <div class="flex-1 flex flex-col min-h-0">
+                        <!-- Progress Bar for Generator -->
+                        <div id="genProgressArea"
+                            class="hidden mb-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm mx-4 md:mx-0">
+                            <div class="flex justify-between text-xs font-semibold uppercase text-slate-500 mb-2">
+                                <span>Checking Availability...</span>
+                                <span id="genProgressText">0 / 0</span>
+                            </div>
+                            <div class="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden mb-2">
+                                <div id="genProgressBar"
+                                    class="h-full bg-gradient-to-r from-brand-500 to-indigo-500 w-0 transition-all duration-300">
+                                </div>
+                            </div>
+                            <div class="flex gap-4 text-xs items-center">
+                                <span class="text-green-600 dark:text-green-400 font-bold">Available: <span
+                                        id="genCountAvail">0</span></span>
+                                <span class="text-slate-500">Checked: <span id="genCountChecked">0</span></span>
+                                <button id="genStopBtn"
+                                    class="ml-auto text-red-500 hover:text-red-700 font-bold uppercase tracking-wider px-2 py-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                                    onclick="S.cancelGenCheck=true">Stop</button>
+                            </div>
+                        </div>
+
                         <div
                             class="glass-panel flex-1 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden min-h-0">
                             <!-- Results Header -->
@@ -1870,6 +1921,30 @@
                                 </button>
                             </div>
 
+                            <!-- Availability Settings -->
+                            <div class="mb-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                <h3 class="font-bold text-xs text-slate-500 mb-3 uppercase tracking-wider">Availability
+                                    Check</h3>
+                                <div class="grid grid-cols-2 gap-3 mb-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-500 mb-1">Target
+                                            Results</label>
+                                        <input type="number" id="autoTargetResults" value="50" min="1" max="200"
+                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-purple-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-500 mb-1">Max Checks</label>
+                                        <input type="number" id="autoMaxChecks" value="500" min="50" max="4000"
+                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-purple-500 outline-none">
+                                    </div>
+                                </div>
+                                <label class="flex items-center gap-2 text-xs text-slate-500 cursor-pointer">
+                                    <input type="checkbox" id="autoShowProgress" checked
+                                        class="rounded border-slate-300 text-purple-500 focus:ring-purple-500">
+                                    Show checking progress
+                                </label>
+                            </div>
+
                             <div class="space-y-3">
                                 <button id="autoGenerateBtn"
                                     class="w-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
@@ -1892,6 +1967,56 @@
                                     </div>
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Automation Results -->
+                <div class="mt-8 mb-12 animate-fade-in-up">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                            <span>✨ Results</span>
+                            <span id="autoResCount"
+                                class="text-sm font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">0</span>
+                        </h2>
+                        <div class="flex gap-2">
+                            <button id="autoCopyBtn"
+                                class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                📋 Copy Available
+                            </button>
+                            <button id="autoExportBtn"
+                                class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                📥 CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div id="autoProgressArea"
+                        class="hidden mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex justify-between text-xs font-semibold uppercase text-slate-500 mb-2">
+                            <span>Checking Availability...</span>
+                            <span id="autoProgressText">0 / 0</span>
+                        </div>
+                        <div class="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div id="autoProgressBar"
+                                class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 w-0 transition-all duration-300">
+                            </div>
+                        </div>
+                        <div class="flex gap-4 mt-2 text-xs">
+                            <span class="text-green-600 dark:text-green-400">Available: <b
+                                    id="autoCountAvail">0</b></span>
+                            <span class="text-slate-500">Checked: <b id="autoCountChecked">0</b></span>
+                            <button id="autoStopBtn" class="ml-auto text-red-500 hover:text-red-700 font-bold"
+                                onclick="S.cancelCheck=true">STOP</button>
+                        </div>
+                    </div>
+
+                    <!-- Results Grid -->
+                    <div id="autoResultsGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                        <!-- Filled by JS -->
+                        <div class="col-span-full py-12 text-center text-slate-400">
+                            Generated domains will appear here...
                         </div>
                     </div>
                 </div>
@@ -3054,6 +3179,7 @@
         function clearInputs() {
             $('mainKw').value = '';
             $('bulkKw').value = '';
+            $('insertedList').innerHTML = '';
             updateStats();
             if ($('clear-res-check').checked) {
                 S.domains = [];
@@ -3091,11 +3217,26 @@
 
                 // Remove hyphens from all domains
                 S.domains = [...new Set(results.map(d => d.replace(/-/g, '')))];
+
+                // Initialize Availability State if enabled
+                S.genStates = {};
+                const checkEnabled = $('genCheckEnabled') && $('genCheckEnabled').checked;
+
+                if (checkEnabled) {
+                    S.domains.forEach(d => {
+                        S.genStates[d] = { status: 'pending', price: null };
+                    });
+                }
+
                 renderResults();
 
                 btnText.innerText = '✨ Generate Results';
                 spinner.classList.add('hidden');
                 toast(`Generated ${results.length} domains`);
+
+                if (checkEnabled && S.domains.length > 0) {
+                    startGenAvailabilityCheck();
+                }
             }, 400);
         }
 
@@ -3115,19 +3256,137 @@
             grid.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 pb-8">` +
                 S.domains.slice(0, 500).map(d => {
                     const isWin = S.winners.some(w => w.d === d);
+                    const state = S.genStates ? S.genStates[d] : null;
+
+                    let statusClass = 'border-slate-200 dark:border-slate-700';
+                    let statusIcon = '';
+                    let priceHtml = '';
+
+                    if (state) {
+                        if (state.status === 'available') {
+                            statusClass = 'border-green-500 bg-green-50 dark:bg-green-900/20';
+                            statusIcon = '<span class="text-green-600 dark:text-green-400 text-xs font-bold">AVAIL</span>';
+                            if (state.price) priceHtml = `<span class="text-xs font-bold text-slate-600 dark:text-slate-300">$${state.price}</span>`;
+                        } else if (state.status === 'taken') {
+                            statusClass = 'opacity-60 bg-slate-100 dark:bg-slate-800 border-slate-200';
+                            statusIcon = '<span class="text-slate-400 text-xs">TAKEN</span>';
+                        } else if (state.status === 'checking') {
+                            statusClass = 'border-purple-300 animate-pulse';
+                            statusIcon = '<span class="text-purple-500 text-xs">...</span>';
+                        } else if (state.status === 'error') {
+                            statusClass = 'border-red-200 bg-red-50';
+                            statusIcon = '<span class="text-red-500 text-xs">ERR</span>';
+                        }
+                    }
+
                     return `
-            <div class="group relative bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:shadow-md transition-all hover:border-brand-300 dark:hover:border-brand-700 flex justify-between items-center animate-fade-in">
-                <span class="font-medium text-slate-700 dark:text-slate-200 truncate pr-2 select-all cursor-pointer" onclick="navigator.clipboard.writeText('${d}');toast('Copied')">${d}</span>
-                <button onclick="toggleWinner('${d}')" class="${isWin ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'} transition-colors p-1" title="Save to Winners">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                </button>
+            <div class="group relative bg-white dark:bg-slate-800 border ${statusClass} rounded-xl p-3 hover:shadow-md transition-all hover:border-brand-300 dark:hover:border-brand-700 flex flex-col gap-2 animate-fade-in">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium text-slate-700 dark:text-slate-200 truncate pr-2 select-all cursor-pointer" onclick="navigator.clipboard.writeText('${d}');toast('Copied')">${d}</span>
+                    <button onclick="toggleWinner('${d}')" class="${isWin ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'} transition-colors p-1" title="Save to Winners">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </button>
+                </div>
+                ${state ? `
+                <div class="flex justify-between items-center mt-auto border-t border-slate-100 dark:border-slate-700/50 pt-2">
+                    ${statusIcon}
+                    ${priceHtml}
+                    ${state.buyUrl ? `<a href="${state.buyUrl}" target="_blank" class="text-xs text-blue-500 hover:underline">Buy ↗</a>` : ''}
+                </div>` : ''}
             </div>`;
                 }).join('') + `</div>`;
         }
 
-        // ═══════════════════════════════════════════
-        // AI SCORING SYSTEM
-        // ═══════════════════════════════════════════
+        // Generator Availability Check Logic
+        async function startGenAvailabilityCheck() {
+            if (S.genChecking) return;
+            S.genChecking = true;
+            S.cancelGenCheck = false;
+            S.genCheckedCount = 0;
+            S.genAvailableCount = 0;
+
+            const concurrency = 5;
+            const targetAvailable = parseInt($('genTargetResults').value) || 50;
+            const maxChecks = parseInt($('genMaxChecks').value) || 500;
+
+            // Initial Progress Update
+            updateGenProgress();
+
+            const processQueue = async () => {
+                if (S.cancelGenCheck || S.genAvailableCount >= targetAvailable || S.genCheckedCount >= maxChecks) {
+                    S.genChecking = false;
+                    renderResults(); // Final render
+                    return;
+                }
+
+                // Find next pending
+                const pendingDomain = S.domains.find(d => S.genStates[d] && S.genStates[d].status === 'pending');
+                if (!pendingDomain) {
+                    S.genChecking = false;
+                    renderResults();
+                    return;
+                }
+
+                S.genStates[pendingDomain].status = 'checking';
+                // Optional: Render strictly every checking update might be too heavy?
+                // Let's rely on batch updates or progress bar for smoother feel
+                // renderResults(); 
+
+                try {
+                    const res = await checkDomain(pendingDomain);
+                    S.genStates[pendingDomain].status = res.available ? 'available' : 'taken';
+                    S.genStates[pendingDomain].price = res.price;
+                    S.genStates[pendingDomain].premium = res.premium;
+                    S.genStates[pendingDomain].buyUrl = res.buyUrl;
+
+                    if (res.available) S.genAvailableCount++;
+                } catch (e) {
+                    S.genStates[pendingDomain].status = 'error';
+                }
+
+                S.genCheckedCount++;
+                updateGenProgress();
+
+                // Optimized rendering: every 5 checks
+                if (S.genCheckedCount % 5 === 0) renderResults();
+
+                // Next
+                processQueue();
+            };
+
+            // Start workers
+            for (let i = 0; i < concurrency; i++) {
+                processQueue();
+            }
+        }
+
+        function updateGenProgress() {
+            const bar = $('genProgressBar');
+            const area = $('genProgressArea');
+            const txt = $('genProgressText');
+            const countAvail = $('genCountAvail');
+            const countChecked = $('genCountChecked');
+
+            if (!area) return;
+
+            if (S.genChecking) {
+                area.classList.remove('hidden');
+                const total = Math.min(S.domains.length, parseInt($('genMaxChecks').value) || 500);
+                const pct = Math.round((S.genCheckedCount / total) * 100);
+                // Cap at 100% visual
+                bar.style.width = `${Math.min(pct, 100)}%`;
+                txt.innerText = `${S.genCheckedCount} / ${total}`;
+                countAvail.innerText = S.genAvailableCount;
+                countChecked.innerText = S.genCheckedCount;
+            } else {
+                if (S.genCheckedCount > 0) {
+                    // Keep showing results if we did something
+                    bar.style.width = '100%';
+                } else {
+                    area.classList.add('hidden');
+                }
+            }
+        }
         const AI_SCORE_ENDPOINT = '/.netlify/functions/score';
         const AI_CHUNK_SIZE = 100; // Domains per request (max 120)
 
@@ -5241,6 +5500,302 @@
             };
             reader.readAsText(file);
             e.target.value = '';
+        }
+
+        // ═══════════════════════════════════════════
+        // AUTOMATION & AVAILABILITY CHECKING
+        // ═══════════════════════════════════════════
+
+        // State for automation
+        S.autoResults = [];
+        S.checking = false;
+        S.cancelCheck = false;
+        S.checkQueue = [];
+        S.checkedCount = 0;
+        S.availableCount = 0;
+
+        async function autoGenerate() {
+            const presetIdx = $('autoPresetSelect').value;
+            if (presetIdx === '') { toast('Please select a preset', 'err'); return; }
+
+            const presets = getAutoPresets();
+            const preset = presets[presetIdx];
+            if (!preset) return;
+
+            // Get inputs
+            const mainKw = $('mainKw').value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (!mainKw) { toast('Please enter a main keyword (top left)', 'err'); return; }
+
+            // UI Update
+            const btn = $('autoGenerateBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '🚀 Generating...';
+            btn.disabled = true;
+
+            // Generate Domains based on Preset
+            // 1. Collect words from packs (Multipliers)
+            // Note: In a real app, we might select specific packs. Here we use ALL multipliers for variety.
+            const multipliers = S.packs.filter(p => p.type === 'multiplier').flatMap(p => p.words);
+
+            // 2. Generate candidates
+            let candidates = new Set();
+            const templates = preset.templates || ['A+B'];
+            const prefixes = (preset.recommendedPrefixes || []).concat(['get', 'try', 'go', 'use', 'my', 'the']);
+            const suffixes = (preset.recommendedSuffixes || []).concat(['app', 'hq', 'io', 'co', 'site']);
+
+            // Helper to add if valid
+            const add = (d) => {
+                if (!d) return;
+                // Constraints
+                const maxLen = parseInt($('autoMaxLen').value) || 12;
+                if (d.length > maxLen) return;
+                if ($('autoNoHyphens').checked && d.includes('-')) return;
+                if ($('autoNoNumbers').checked && /\d/.test(d)) return;
+                // Banned
+                const banned = $('autoBanned').value.split('\n').filter(s => s.trim());
+                if (banned.some(b => d.includes(b.trim()))) return;
+
+                candidates.add(d);
+            };
+
+            // A = mainKw, B = multiplier/suffix/prefix
+            // Logic: Mix mainKw with multipliers and affixes
+
+            // Speed optimization: limit multipliers if too many
+            const safeMults = multipliers.length > 200 ? multipliers.sort(() => 0.5 - Math.random()).slice(0, 200) : multipliers;
+
+            templates.forEach(tpl => {
+                if (tpl === 'A+B') {
+                    safeMults.forEach(m => add(mainKw + m));
+                }
+                if (tpl === 'B+A') {
+                    safeMults.forEach(m => add(m + mainKw));
+                }
+                if (tpl === 'A+suffix') {
+                    suffixes.forEach(s => add(mainKw + s));
+                }
+                if (tpl === 'prefix+A') {
+                    prefixes.forEach(p => add(p + mainKw));
+                }
+                if (tpl === 'prefix+A+B') {
+                    prefixes.forEach(p => {
+                        safeMults.slice(0, 50).forEach(m => add(p + mainKw + m));
+                    });
+                }
+                if (tpl === 'A+B+suffix') {
+                    suffixes.forEach(s => {
+                        safeMults.slice(0, 50).forEach(m => add(mainKw + m + s));
+                    });
+                }
+            });
+
+            // Convert to array and shuffle/sort
+            let results = Array.from(candidates);
+            if ($('autoAvoidUgly').checked) {
+                // Simple heuristic: avoid 3 consonants in a row (unless valid word)
+                // results = results.filter(d => !/[bcdfghjklmnpqrstvwxyz]{4,}/.test(d)); 
+            }
+
+            results = results.sort(() => 0.5 - Math.random()); // Shuffle
+
+            // Limit to Max Checks
+            const maxChecks = parseInt($('autoMaxChecks').value) || 500;
+            results = results.slice(0, maxChecks);
+
+            // Populate Check Queue
+            S.autoResults = results.map(d => ({
+                domain: d + '.com', // Default to .com for now, or allow TLD selection?
+                status: 'pending', // pending, available, taken, error
+                price: null,
+                checked: false
+            }));
+
+            // Initial Render
+            renderAutoResults();
+
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
+            // Start Checking if enabled
+            if (results.length > 0) {
+                startAvailabilityCheck();
+            } else {
+                toast('No domains generated. Try different settings.', 'err');
+            }
+        }
+
+        function renderAutoResults() {
+            const grid = $('autoResultsGrid');
+            const countEl = $('autoResCount');
+            if (!grid) return;
+
+            if (countEl) countEl.innerText = S.autoResults.length;
+
+            if (S.autoResults.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-slate-400">Generated domains will appear here...</div>';
+                return;
+            }
+
+            // Render limit to avoid freezing
+            const limit = 200;
+            const toRender = S.autoResults.slice(0, limit);
+
+            grid.innerHTML = toRender.map(r => {
+                let statusClass = 'border-slate-200 dark:border-slate-700';
+                let statusIcon = '';
+                let priceHtml = '';
+
+                if (r.status === 'available') {
+                    statusClass = 'border-green-500 bg-green-50 dark:bg-green-900/20';
+                    statusIcon = '<span class="text-green-600 dark:text-green-400 text-xs font-bold">AVAIL</span>';
+                    if (r.price) priceHtml = `<span class="text-xs font-bold text-slate-600 dark:text-slate-300">$${r.price}</span>`;
+                } else if (r.status === 'taken') {
+                    statusClass = 'opacity-60 bg-slate-100 dark:bg-slate-800 border-slate-200';
+                    statusIcon = '<span class="text-slate-400 text-xs">TAKEN</span>';
+                } else if (r.status === 'checking') {
+                    statusClass = 'border-purple-300 animate-pulse';
+                    statusIcon = '<span class="text-purple-500 text-xs">...</span>';
+                } else if (r.status === 'error') {
+                    statusClass = 'border-red-200 bg-red-50';
+                    statusIcon = '<span class="text-red-500 text-xs">ERR</span>';
+                }
+
+                // Is it a winner? (Check matches against winners list)
+                const isWin = S.winners.some(w => w.d === r.domain);
+
+                return `
+                <div class="group relative p-3 rounded-lg border ${statusClass} transition-all hover:shadow-sm flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="font-mono text-sm font-bold text-slate-700 dark:text-slate-200 break-all cursor-pointer hover:text-purple-600" onclick="navigator.clipboard.writeText('${r.domain}');toast('Copied')">
+                            ${r.domain}
+                        </div>
+                        <button onclick="toggleWinner('${r.domain}')" class="${isWin ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'} transition-colors" title="Save">
+                            ★
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center mt-auto">
+                        ${statusIcon}
+                        ${priceHtml}
+                        ${r.buyUrl ? `<a href="${r.buyUrl}" target="_blank" class="text-xs text-blue-500 hover:underline">Buy ↗</a>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+
+            if (S.autoResults.length > limit) {
+                grid.innerHTML += `<div class="col-span-full text-center text-xs text-slate-400 py-2">Showing first ${limit} of ${S.autoResults.length} results. Export to see all.</div>`;
+            }
+        }
+
+        async function startAvailabilityCheck() {
+            if (S.checking) return;
+            S.checking = true;
+            S.cancelCheck = false;
+            S.checkedCount = 0;
+            S.availableCount = 0;
+
+            const concurrency = 5;
+            const targetAvailable = parseInt($('autoTargetResults').value) || 50;
+
+            // Update UI
+            // Show progress bar
+
+            const processQueue = async () => {
+                if (S.cancelCheck || S.availableCount >= targetAvailable) {
+                    S.checking = false;
+                    renderAutoResults(); // Final render
+                    return;
+                }
+
+                // Find next pending
+                const pendingIdx = S.autoResults.findIndex(r => r.status === 'pending');
+                if (pendingIdx === -1) {
+                    S.checking = false;
+                    renderAutoResults();
+                    return;
+                }
+
+                const item = S.autoResults[pendingIdx];
+                item.status = 'checking';
+                renderAutoResults(); // Update specific row? Too slow. result-specific update better.
+
+                try {
+                    const res = await checkDomain(item.domain);
+                    item.status = res.available ? 'available' : 'taken';
+                    item.price = res.price;
+                    item.premium = res.premium;
+                    item.buyUrl = res.buyUrl;
+
+                    if (res.available) S.availableCount++;
+                } catch (e) {
+                    item.status = 'error';
+                }
+
+                S.checkedCount++;
+                updateProgress(); // Update progress bar
+
+                // Optimized rendering: only re-render every X items or on finish
+                if (S.checkedCount % 5 === 0) renderAutoResults();
+
+                // Next
+                processQueue();
+            };
+
+            // Start workers
+            for (let i = 0; i < concurrency; i++) {
+                processQueue();
+            }
+        }
+
+        async function checkDomain(domain) {
+            try {
+                const res = await fetch('/.netlify/functions/check-domain', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain })
+                });
+                return await res.json();
+            } catch (e) {
+                console.error(e);
+                return { available: false, error: true };
+            }
+        }
+
+        function updateProgress() {
+            const bar = $('autoProgressBar');
+            const area = $('autoProgressArea');
+            const txt = $('autoProgressText');
+            const countAvail = $('autoCountAvail');
+            const countChecked = $('autoCountChecked');
+
+            if (!area) return;
+
+            if (S.checking) {
+                area.classList.remove('hidden');
+                const total = S.autoResults.length;
+                const pct = Math.round((S.checkedCount / total) * 100);
+                bar.style.width = `${pct}%`;
+                txt.innerText = `${S.checkedCount} / ${total}`;
+                countAvail.innerText = S.availableCount;
+                countChecked.innerText = S.checkedCount;
+            } else {
+                // Keep showing results summary but maybe hide bar functionality?
+                // For now, keep it visible if we have results
+                bar.style.width = '100%';
+                // area.classList.add('hidden'); 
+            }
+        }
+
+        // Stubs for missing funcs
+        function autoScoreAI() { toast('AI Scoring coming soon!'); }
+        function autoRunAgent() { toast('AI Agent coming soon!'); }
+        function copyAutoDomains() {
+            const text = S.autoResults.filter(r => r.status === 'available').map(r => r.domain).join('\n');
+            navigator.clipboard.writeText(text);
+            toast('Copied available domains');
+        }
+        function exportAutoCSV() {
+            const rows = S.autoResults.map(r => [r.domain, r.status, r.price || '']);
+            downloadCSV(rows, 'auto-domains.csv');
         }
 
         // Stub functions for missing weight slider features

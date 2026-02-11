@@ -1,0 +1,234 @@
+
+Add-on requirements (copy/paste)
+
+Copy-only-available feature
+
+Add a button: “Copy Available Domains” that copies ONLY the bare domains (no price, no status, no bullets), one per line.
+
+Example copied text:
+
+trustagent.com
+trustscope.ai
+trustsignal.io
+
+Rules:
+
+Copy list must include only domains that are verified available=true (or “Not verified” must be excluded).
+
+Preserve current on-screen sort order (top to bottom).
+
+Show toast: “Copied X domains”.
+
+
+Also add a small “Copy” icon per row that copies just that single domain string (e.g., trustagent.com).
+
+Increase limits to 4000
+
+Change defaults and caps:
+
+maxChecks default 4000
+
+UI slider/input range up to 4000
+
+Generator can continue checking until it hits the Target Available Results or hits 4000 checks (whichever first).
+
+
+Performance safeguards required:
+
+Concurrency limit still required (start at 3–5). Add adaptive backoff if provider rate-limits (HTTP 429), e.g. reduce concurrency and retry with delay.
+
+Add progress indicator: “Checked 1320/4000 — Found 67 available”.
+
+Add a “Stop” button to cancel ongoing checks cleanly.
+
+
+IMPORTANT: Even with 4000 checks, do not freeze the UI—use async queue + batching.
+
+
+
+
+
+You are working on my domain generator web app (static site deployed on Netlify, repo on GitHub). I want a direct availability + price checker that only shows available domains, highlights them green, and filters out premium.
+
+Goal
+
+When I click “Generate Results”, the app should:
+
+1. Generate candidate names internally (same logic as now)
+
+
+2. Check real availability for each candidate in real time
+
+
+3. Show ONLY domains that are available, each in a green box
+
+
+4. Display price (registration price) when available
+
+
+5. Exclude premium results (premium, “for sale”, aftermarket)
+
+
+6. Restrict TLDs to only: .com, .ai, .io 
+
+7. Stop after finding N available domains (e.g., 50), instead of generating 2000 visible results
+
+
+8. Support “CSV export” but export only the available domains with price + registrar link
+
+
+
+UI requirements
+
+Add settings:
+
+“Target available results”: default 50 (user can set 10–200)
+
+“Max checks”: default 500 (hard safety limit so it doesn’t run forever)
+
+Toggle: “Show checking progress” (e.g., “Checked 120/500 — Found 18 available”)
+
+
+Results list: each item shows:
+
+domain (example.com)
+
+TLD badge (.com/.ai/.io)
+
+availability status (Available ✅)
+
+price (e.g. $10.98) if returned
+
+registrar (e.g. Namecheap)
+
+a “Buy” button/link to registrar search for that domain
+
+
+
+Architecture requirements (Netlify Functions)
+
+This cannot be done reliably only in browser; implement via a Netlify Function:
+
+Create: /netlify/functions/check-domain.js
+
+Frontend calls it with JSON: { "domain": "example.com" }
+
+Function returns JSON:
+
+
+{
+  "domain": "example.com",
+  "available": true,
+  "price": 10.98,
+  "currency": "USD",
+  "premium": false,
+  "registrar": "Namecheap",
+  "buyUrl": "https://...."
+}
+
+Provider choice
+
+I don’t know API keys. Implement it in a way that works for me:
+
+Preferred approach (real availability + price + premium flag):
+
+Use a provider that returns availability + price + premium.
+
+If a paid API key is required, implement:
+
+A “provider = mock/demo” mode that works with a placeholder key and returns “unknown” rather than breaking the site.
+
+A clear step-by-step “How to add API key on Netlify” guide inside a SETUP.md.
+
+
+
+Fallback approach (no API key):
+
+If we can’t use a real domain availability API without a key, still implement:
+
+“Buy link only” mode that does not claim availability, but sends user to registrar search.
+
+UI must label results as “Not verified” in that mode.
+
+
+But if possible, still do the real approach as default.
+
+
+Filtering premium
+
+If provider returns premium=true, hide it.
+
+If provider doesn’t return premium:
+
+Treat any result with price > $100 (configurable threshold) as premium and hide.
+
+Also hide if response indicates “aftermarket”, “auction”, “for sale”, etc.
+
+
+
+Performance requirements
+
+Don’t hit rate limits:
+
+Use concurrency limit: 3–5 checks at a time (configurable)
+
+Debounce/cancel: if user clicks Generate again, cancel in-flight requests
+
+Cache results in memory + localStorage for 24h (domain → availability/price)
+
+
+The generator should stop early once it finds the target number of available domains.
+
+
+Code changes to existing files
+
+Update generator flow: generate candidates -> queue checks -> render only available
+
+Add status bar showing checks/found
+
+Add green card CSS style for available
+
+Update CSV export to only available results with price
+
+Update TLD selector to only .com .ai .io and remove others
+
+
+Netlify config
+
+I currently have netlify.toml. Ensure:
+
+functions directory is netlify/functions
+
+add redirect so /api/check maps to the function if needed:
+
+/api/check -> /.netlify/functions/check-domain
+
+
+Don’t break my existing SPA redirect to /SuperCombinator.html
+
+
+Deliverables
+
+1. Working implementation
+
+
+2. SETUP.md that explains:
+
+What an API key is
+
+Which provider you chose
+
+Where to paste the key in Netlify UI
+
+How to test locally and on production
+
+
+
+3. If the provider requires payment, include a free alternative mode (buy-link only).
+
+
+
+IMPORTANT: Do not fake availability. If availability cannot be verified without a key, show “Not verified” and only provide buy links.
+
+
+---

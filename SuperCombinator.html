@@ -1399,15 +1399,45 @@
                                     class="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">0</span>
                             </div>
 
-                            <button id="insertPackBtn"
-                                class="w-full mb-3 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/50 py-2 rounded-lg text-xs font-bold transition-colors border border-brand-200 dark:border-brand-800/50">
-                                + Insert Category Pack
-                            </button>
-                            <div id="insertedList" class="flex flex-wrap gap-2 mb-2 min-h-[4px]"></div>
+                            <div class="flex items-center gap-2 mb-3">
+                                <button id="insertPackBtn"
+                                    class="flex-1 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/50 py-2 rounded-lg text-xs font-bold transition-colors border border-brand-200 dark:border-brand-800/50">
+                                    + Insert Pack
+                                </button>
+                                <!-- Compact Pack Indicator -->
+                                <div id="packIndicatorWrap" class="relative hidden">
+                                    <button id="packIndicatorBtn"
+                                        class="flex items-center gap-1.5 px-2.5 py-2 rounded-lg bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-700 hover:bg-brand-200 dark:hover:bg-brand-900/60 transition-colors"
+                                        title="Added packs">
+                                        <span class="text-sm">📦</span>
+                                        <span id="packIndicatorCount"
+                                            class="text-xs font-bold bg-brand-600 text-white rounded-full w-4 h-4 flex items-center justify-center leading-none">0</span>
+                                    </button>
+                                    <!-- Dropdown -->
+                                    <div id="packIndicatorDrop"
+                                        class="absolute right-0 top-full mt-1.5 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-50 hidden overflow-hidden">
+                                        <div
+                                            class="px-3 py-2 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                            <span
+                                                class="text-xs font-bold text-slate-500 uppercase tracking-wider">Added
+                                                Packs</span>
+                                            <button id="clearAllPacksBtn"
+                                                class="text-xs text-red-500 hover:text-red-700 font-medium">Clear
+                                                all</button>
+                                        </div>
+                                        <div id="packIndicatorList" class="max-h-48 overflow-y-auto py-1"></div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <textarea id="bulkKw"
                                 class="w-full h-40 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500 outline-none resize-none font-mono"
                                 placeholder="Paste list..."></textarea>
+                            <div class="flex items-center justify-between mt-1.5 px-1">
+                                <span class="text-xs text-slate-400">Total keywords in field:</span>
+                                <span id="kwTotalCount"
+                                    class="text-xs font-bold text-brand-600 dark:text-brand-400">0</span>
+                            </div>
 
                             <div class="flex gap-2 mt-3">
                                 <button id="dedupBtn"
@@ -2047,7 +2077,8 @@
 
                 <!-- Winners Content (hidden until authenticated) -->
                 <div id="winnersContent" class="hidden">
-                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                    <div
+                        class="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4 sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md py-4 -mx-4 md:-mx-8 px-4 md:px-8 border-b border-slate-100 dark:border-slate-800">
                         <div>
                             <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Winners</h1>
                             <p class="text-slate-500 dark:text-slate-400">Track domains you want to buy, own, or have
@@ -2087,9 +2118,9 @@
 
                     <div
                         class="glass-panel rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-                        <!-- Filters -->
+                        <!-- Filters - Sticky -->
                         <div
-                            class="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap gap-4 items-center">
+                            class="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap gap-4 items-center sticky top-[89px] z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
                             <input type="text" id="winSearch" placeholder="Search domains..."
                                 class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-sm w-64 focus:ring-2 focus:ring-accent-500 outline-none">
                             <div class="flex gap-2" id="winStatusFilters">
@@ -2115,31 +2146,28 @@
                         </div>
 
                         <!-- Table -->
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead
-                                    class="bg-slate-50 dark:bg-slate-800/50 text-xs font-bold text-slate-500 uppercase">
-                                    <tr>
-                                        <th class="px-6 py-4">Domain</th>
-                                        <th class="px-6 py-4">Category</th>
-                                        <th class="px-6 py-4">Status</th>
-                                        <th class="px-6 py-4">Price</th>
-                                        <th class="px-6 py-4">Notes</th>
-                                        <th class="px-6 py-4">Date</th>
-                                        <th class="px-6 py-4 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="winnersTable"
-                                    class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-                                </tbody>
-                            </table>
-                            <div id="winEmpty" class="hidden p-12 text-center text-slate-400">
-                                <div
-                                    class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 mx-auto text-2xl">
-                                    ⭐</div>
-                                <h3 class="font-bold text-slate-600 dark:text-slate-300">No winners yet</h3>
-                                <p class="text-sm mt-1">Save domains from results or add them manually.</p>
-                            </div>
+                        <table class="w-full text-left border-collapse">
+                            <thead
+                                class="bg-slate-50 dark:bg-slate-800/80 text-xs font-bold text-slate-500 uppercase sticky top-[145px] z-10 backdrop-blur-sm">
+                                <tr>
+                                    <th class="px-6 py-4">Domain</th>
+                                    <th class="px-6 py-4">Category</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Price</th>
+                                    <th class="px-6 py-4">Notes</th>
+                                    <th class="px-6 py-4">Date</th>
+                                    <th class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="winnersTable" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+                            </tbody>
+                        </table>
+                        <div id="winEmpty" class="hidden p-12 text-center text-slate-400">
+                            <div
+                                class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 mx-auto text-2xl">
+                                ⭐</div>
+                            <h3 class="font-bold text-slate-600 dark:text-slate-300">No winners yet</h3>
+                            <p class="text-sm mt-1">Save domains from results or add them manually.</p>
                         </div>
                     </div>
                 </div>
@@ -3026,6 +3054,29 @@
             $('insertPackBtn').onclick = () => { renderCatPicker(); openModal('catModal'); };
             $('pickMultBtn').onclick = () => { renderMultPicker(); openModal('multModal'); };
 
+            // Pack Indicator Dropdown
+            $('packIndicatorBtn').onclick = (e) => {
+                e.stopPropagation();
+                $('packIndicatorDrop').classList.toggle('hidden');
+            };
+            $('clearAllPacksBtn').onclick = (e) => {
+                e.stopPropagation();
+                S.insertedPacks = [];
+                $('bulkKw').value = '';
+                renderPackIndicator();
+                $('packIndicatorDrop').classList.add('hidden');
+                updateStats();
+                toast('Packs cleared');
+            };
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#packIndicatorWrap')) {
+                    $('packIndicatorDrop')?.classList.add('hidden');
+                }
+            });
+
+            // Update keyword total count when textarea changes
+            $('bulkKw').addEventListener('input', updateStats);
+
             // Results
             $('copyAllBtn').onclick = () => { navigator.clipboard.writeText(S.domains.join('\n')); toast('Copied all'); };
             $('exportResBtn').onclick = () => downloadCSV(S.domains.map(d => [d]), 'domains.csv');
@@ -3179,7 +3230,8 @@
         function clearInputs() {
             $('mainKw').value = '';
             $('bulkKw').value = '';
-            $('insertedList').innerHTML = '';
+            S.insertedPacks = [];
+            renderPackIndicator();
             updateStats();
             if ($('clear-res-check').checked) {
                 S.domains = [];
@@ -4572,6 +4624,7 @@
         function updateStats() {
             const words = $('bulkKw').value.split('\n').filter(s => s.trim());
             $('kwCount').innerText = words.length;
+            if ($('kwTotalCount')) $('kwTotalCount').innerText = words.length;
             $('hdrPacks').innerText = S.packs.length;
             $('packCountBadge').innerText = S.packs.length;
             let total = 0; S.packs.forEach(p => total += p.words.length);
@@ -4587,16 +4640,63 @@
     `).join('');
         }
 
+        // Track inserted packs
+        if (!S.insertedPacks) S.insertedPacks = [];
+
+        function renderPackIndicator() {
+            const wrap = $('packIndicatorWrap');
+            const countEl = $('packIndicatorCount');
+            const list = $('packIndicatorList');
+            const packs = S.insertedPacks || [];
+
+            if (packs.length === 0) {
+                wrap.classList.add('hidden');
+                return;
+            }
+            wrap.classList.remove('hidden');
+            countEl.textContent = packs.length;
+
+            list.innerHTML = packs.map((entry, i) => `
+                <div class="flex items-center justify-between px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 group">
+                    <div>
+                        <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">${entry.name}</div>
+                        <div class="text-[10px] text-slate-400">${entry.wordCount} words</div>
+                    </div>
+                    <button onclick="removeInsertedPack(${i})" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 text-xs font-bold transition-opacity px-1">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeInsertedPack(index) {
+            if (!S.insertedPacks) return;
+            S.insertedPacks.splice(index, 1);
+            renderPackIndicator();
+            // Close dropdown if empty
+            if (S.insertedPacks.length === 0) {
+                $('packIndicatorDrop').classList.add('hidden');
+            }
+        }
+
         function insertPack(id) {
             const p = S.packs.find(x => x.id === id);
             const mode = document.querySelector('#insertModeGrp .on').dataset.v;
             const txt = p.words.join('\n');
-            if (mode === 'replace') $('bulkKw').value = txt;
-            else $('bulkKw').value += '\n' + txt;
+            if (mode === 'replace') {
+                $('bulkKw').value = txt;
+                S.insertedPacks = [{ id: p.id, name: p.name, wordCount: p.words.length }];
+            } else {
+                $('bulkKw').value += (($('bulkKw').value.trim() ? '\n' : '') + txt);
+                if (!S.insertedPacks) S.insertedPacks = [];
+                // Avoid duplicate entries for same pack
+                const exists = S.insertedPacks.findIndex(x => x.id === p.id);
+                if (exists >= 0) {
+                    S.insertedPacks[exists].wordCount = p.words.length;
+                } else {
+                    S.insertedPacks.push({ id: p.id, name: p.name, wordCount: p.words.length });
+                }
+            }
 
-            // Add tag to inserted list
-            $('insertedList').innerHTML += `<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-brand-100 text-brand-700 text-xs font-bold"><span onclick="this.parentElement.remove()">×</span> ${p.name}</span>`;
-
+            renderPackIndicator();
             closeModal('catModal');
             updateStats();
         }

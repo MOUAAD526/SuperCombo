@@ -1395,49 +1395,44 @@
                                         class="w-6 h-6 rounded bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-300 text-xs flex items-center justify-center">2</span>
                                     Bulk Keywords
                                 </h3>
-                                <span id="kwCount"
-                                    class="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">0</span>
-                            </div>
-
-                            <div class="flex items-center gap-2 mb-3">
-                                <button id="insertPackBtn"
-                                    class="flex-1 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/50 py-2 rounded-lg text-xs font-bold transition-colors border border-brand-200 dark:border-brand-800/50">
-                                    + Insert Pack
-                                </button>
-                                <!-- Compact Pack Indicator -->
-                                <div id="packIndicatorWrap" class="relative hidden">
-                                    <button id="packIndicatorBtn"
-                                        class="flex items-center gap-1.5 px-2.5 py-2 rounded-lg bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-700 hover:bg-brand-200 dark:hover:bg-brand-900/60 transition-colors"
-                                        title="Added packs">
-                                        <span class="text-sm">📦</span>
-                                        <span id="packIndicatorCount"
-                                            class="text-xs font-bold bg-brand-600 text-white rounded-full w-4 h-4 flex items-center justify-center leading-none">0</span>
-                                    </button>
-                                    <!-- Dropdown -->
-                                    <div id="packIndicatorDrop"
-                                        class="absolute right-0 top-full mt-1.5 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-50 hidden overflow-hidden">
-                                        <div
-                                            class="px-3 py-2 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                                            <span
-                                                class="text-xs font-bold text-slate-500 uppercase tracking-wider">Added
-                                                Packs</span>
-                                            <button id="clearAllPacksBtn"
-                                                class="text-xs text-red-500 hover:text-red-700 font-medium">Clear
-                                                all</button>
-                                        </div>
-                                        <div id="packIndicatorList" class="max-h-48 overflow-y-auto py-1"></div>
-                                    </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="dupeCount"
+                                        class="text-xs font-mono bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded hidden">0
+                                        dupes</span>
+                                    <span id="kwCount"
+                                        class="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">0</span>
                                 </div>
                             </div>
 
-                            <textarea id="bulkKw"
+                            <button id="insertPackBtn"
+                                class="w-full mb-3 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/50 py-2 rounded-lg text-xs font-bold transition-colors border border-brand-200 dark:border-brand-800/50">
+                                + Insert Category Pack
+                            </button>
+                            <!-- Inserted Packs Dropdown -->
+                            <div id="insertedPacksDropdown" class="relative mb-3 hidden group/packs">
+                                <div id="insertedPacksToggle"
+                                    class="w-full flex items-center justify-between px-3 py-2 bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800/50 rounded-lg text-xs font-bold text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-colors cursor-pointer">
+                                    <span class="flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M20 7l-8 4-8-4m16 0v10l-8 4m8-14L12 3 4 7m8 4v10" />
+                                        </svg>
+                                        <span id="insertedPacksLabel">0 Packs Inserted</span>
+                                    </span>
+                                    <svg class="w-4 h-4 transition-transform group-hover/packs:rotate-180" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                                <div id="insertedPacksList"
+                                    class="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden max-h-52 overflow-y-auto z-40 opacity-0 invisible group-hover/packs:opacity-100 group-hover/packs:visible transition-all duration-150">
+                                </div>
+                            </div>
+
+                            <textarea id="bulkKw" oninput="updateStats()"
                                 class="w-full h-40 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500 outline-none resize-none font-mono"
                                 placeholder="Paste list..."></textarea>
-                            <div class="flex items-center justify-between mt-1.5 px-1">
-                                <span class="text-xs text-slate-400">Total keywords in field:</span>
-                                <span id="kwTotalCount"
-                                    class="text-xs font-bold text-brand-600 dark:text-brand-400">0</span>
-                            </div>
 
                             <div class="flex gap-2 mt-3">
                                 <button id="dedupBtn"
@@ -1450,35 +1445,6 @@
                                 <button id="removeNumsKwBtn"
                                     class="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300">No
                                     #</button>
-                            </div>
-                        </div>
-
-                        <!-- Availability Model -->
-                        <div class="glass-panel p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-3">
-                                <h3
-                                    class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-sm uppercase tracking-wider">
-                                    Availability Check
-                                </h3>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="checkbox" id="genCheckEnabled"
-                                        class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
-                                    <span class="text-xs font-normal text-slate-500">Enable</span>
-                                </label>
-                            </div>
-
-                            <div id="genCheckSettings"
-                                class="grid grid-cols-2 gap-3 opacity-50 pointer-events-none transition-opacity">
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-500 mb-1">Target</label>
-                                    <input type="number" id="genTargetResults" value="50" min="1" max="200"
-                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-brand-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-500 mb-1">Max Checks</label>
-                                    <input type="number" id="genMaxChecks" value="500" min="50" max="4000"
-                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-brand-500">
-                                </div>
                             </div>
                         </div>
 
@@ -1506,28 +1472,6 @@
 
                     <!-- Results Column - Scrollable -->
                     <div class="flex-1 flex flex-col min-h-0">
-                        <!-- Progress Bar for Generator -->
-                        <div id="genProgressArea"
-                            class="hidden mb-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm mx-4 md:mx-0">
-                            <div class="flex justify-between text-xs font-semibold uppercase text-slate-500 mb-2">
-                                <span>Checking Availability...</span>
-                                <span id="genProgressText">0 / 0</span>
-                            </div>
-                            <div class="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden mb-2">
-                                <div id="genProgressBar"
-                                    class="h-full bg-gradient-to-r from-brand-500 to-indigo-500 w-0 transition-all duration-300">
-                                </div>
-                            </div>
-                            <div class="flex gap-4 text-xs items-center">
-                                <span class="text-green-600 dark:text-green-400 font-bold">Available: <span
-                                        id="genCountAvail">0</span></span>
-                                <span class="text-slate-500">Checked: <span id="genCountChecked">0</span></span>
-                                <button id="genStopBtn"
-                                    class="ml-auto text-red-500 hover:text-red-700 font-bold uppercase tracking-wider px-2 py-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-                                    onclick="S.cancelGenCheck=true">Stop</button>
-                            </div>
-                        </div>
-
                         <div
                             class="glass-panel flex-1 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden min-h-0">
                             <!-- Results Header -->
@@ -1951,30 +1895,6 @@
                                 </button>
                             </div>
 
-                            <!-- Availability Settings -->
-                            <div class="mb-4 pt-4 border-t border-slate-100 dark:border-slate-700">
-                                <h3 class="font-bold text-xs text-slate-500 mb-3 uppercase tracking-wider">Availability
-                                    Check</h3>
-                                <div class="grid grid-cols-2 gap-3 mb-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-500 mb-1">Target
-                                            Results</label>
-                                        <input type="number" id="autoTargetResults" value="50" min="1" max="200"
-                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-purple-500 outline-none">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-500 mb-1">Max Checks</label>
-                                        <input type="number" id="autoMaxChecks" value="500" min="50" max="4000"
-                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-purple-500 outline-none">
-                                    </div>
-                                </div>
-                                <label class="flex items-center gap-2 text-xs text-slate-500 cursor-pointer">
-                                    <input type="checkbox" id="autoShowProgress" checked
-                                        class="rounded border-slate-300 text-purple-500 focus:ring-purple-500">
-                                    Show checking progress
-                                </label>
-                            </div>
-
                             <div class="space-y-3">
                                 <button id="autoGenerateBtn"
                                     class="w-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
@@ -1997,56 +1917,6 @@
                                     </div>
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Automation Results -->
-                <div class="mt-8 mb-12 animate-fade-in-up">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                            <span>✨ Results</span>
-                            <span id="autoResCount"
-                                class="text-sm font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">0</span>
-                        </h2>
-                        <div class="flex gap-2">
-                            <button id="autoCopyBtn"
-                                class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                                📋 Copy Available
-                            </button>
-                            <button id="autoExportBtn"
-                                class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                                📥 CSV
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <div id="autoProgressArea"
-                        class="hidden mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <div class="flex justify-between text-xs font-semibold uppercase text-slate-500 mb-2">
-                            <span>Checking Availability...</span>
-                            <span id="autoProgressText">0 / 0</span>
-                        </div>
-                        <div class="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                            <div id="autoProgressBar"
-                                class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 w-0 transition-all duration-300">
-                            </div>
-                        </div>
-                        <div class="flex gap-4 mt-2 text-xs">
-                            <span class="text-green-600 dark:text-green-400">Available: <b
-                                    id="autoCountAvail">0</b></span>
-                            <span class="text-slate-500">Checked: <b id="autoCountChecked">0</b></span>
-                            <button id="autoStopBtn" class="ml-auto text-red-500 hover:text-red-700 font-bold"
-                                onclick="S.cancelCheck=true">STOP</button>
-                        </div>
-                    </div>
-
-                    <!-- Results Grid -->
-                    <div id="autoResultsGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                        <!-- Filled by JS -->
-                        <div class="col-span-full py-12 text-center text-slate-400">
-                            Generated domains will appear here...
                         </div>
                     </div>
                 </div>
@@ -2077,8 +1947,8 @@
 
                 <!-- Winners Content (hidden until authenticated) -->
                 <div id="winnersContent" class="hidden">
-                    <div
-                        class="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4 sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md py-4 -mx-4 md:-mx-8 px-4 md:px-8 border-b border-slate-100 dark:border-slate-800">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4 sticky top-16 z-30 bg-white/95 dark:bg-dark-bg/95 backdrop-blur-md py-4 -mx-4 px-4"
+                        style="top: 64px;">
                         <div>
                             <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Winners</h1>
                             <p class="text-slate-500 dark:text-slate-400">Track domains you want to buy, own, or have
@@ -2116,11 +1986,10 @@
                         </div>
                     </div>
 
-                    <div
-                        class="glass-panel rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-                        <!-- Filters - Sticky -->
-                        <div
-                            class="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap gap-4 items-center sticky top-[89px] z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+                    <div class="glass-panel rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <!-- Filters -->
+                        <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap gap-4 items-center sticky z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-t-2xl"
+                            style="top: 130px;">
                             <input type="text" id="winSearch" placeholder="Search domains..."
                                 class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-sm w-64 focus:ring-2 focus:ring-accent-500 outline-none">
                             <div class="flex gap-2" id="winStatusFilters">
@@ -2144,30 +2013,43 @@
                                 class="ml-auto text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500">0
                                 domains</span>
                         </div>
+                        <!-- TLD Filters -->
+                        <div id="winTldFilterBar"
+                            class="px-4 py-2 border-b border-slate-100 dark:border-slate-700 hidden sticky z-[19] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md"
+                            style="top: 185px;">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">TLD</span>
+                                <div class="flex gap-1.5 flex-wrap" id="winTldChips"></div>
+                            </div>
+                        </div>
 
                         <!-- Table -->
-                        <table class="w-full text-left border-collapse">
-                            <thead
-                                class="bg-slate-50 dark:bg-slate-800/80 text-xs font-bold text-slate-500 uppercase sticky top-[145px] z-10 backdrop-blur-sm">
-                                <tr>
-                                    <th class="px-6 py-4">Domain</th>
-                                    <th class="px-6 py-4">Category</th>
-                                    <th class="px-6 py-4">Status</th>
-                                    <th class="px-6 py-4">Price</th>
-                                    <th class="px-6 py-4">Notes</th>
-                                    <th class="px-6 py-4">Date</th>
-                                    <th class="px-6 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="winnersTable" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-                            </tbody>
-                        </table>
-                        <div id="winEmpty" class="hidden p-12 text-center text-slate-400">
-                            <div
-                                class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 mx-auto text-2xl">
-                                ⭐</div>
-                            <h3 class="font-bold text-slate-600 dark:text-slate-300">No winners yet</h3>
-                            <p class="text-sm mt-1">Save domains from results or add them manually.</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead
+                                    class="bg-slate-50 dark:bg-slate-800/95 text-xs font-bold text-slate-500 uppercase sticky z-10"
+                                    style="top: 193px;">
+                                    <tr>
+                                        <th class="px-6 py-4">Domain</th>
+                                        <th class="px-6 py-4">Category</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4">Price</th>
+                                        <th class="px-6 py-4">Notes</th>
+                                        <th class="px-6 py-4">Date</th>
+                                        <th class="px-6 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="winnersTable"
+                                    class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+                                </tbody>
+                            </table>
+                            <div id="winEmpty" class="hidden p-12 text-center text-slate-400">
+                                <div
+                                    class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 mx-auto text-2xl">
+                                    ⭐</div>
+                                <h3 class="font-bold text-slate-600 dark:text-slate-300">No winners yet</h3>
+                                <p class="text-sm mt-1">Save domains from results or add them manually.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2897,42 +2779,6 @@
         <div class="toast-msg">Action successful</div>
     </div>
 
-
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js">
-        function initIdentity() {
-            if (!window.netlifyIdentity) {
-                console.error("Netlify Identity widget not loaded. Check the script tag.");
-                return;
-            }
-
-            window.netlifyIdentity.on("init", user => {
-                // TODO: call your existing UI update function here
-                // updateUI(user);
-            });
-
-            window.netlifyIdentity.on("login", user => {
-                window.netlifyIdentity.close();
-                // updateUI(user);
-            });
-
-            window.netlifyIdentity.on("logout", () => {
-                // updateUI(null);
-            });
-
-            window.netlifyIdentity.init();
-        }
-
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", initIdentity);
-        } else {
-            initIdentity();
-        }
-
-    </script>
-
-
-
-
     <script>
         // ═══════════════════════════════════════════
         // STATE
@@ -3047,35 +2893,12 @@
             $('bulkConfirm').onclick = bulkAddToEditor;
 
             // Bulk Keywords Area
-            $('dedupBtn').onclick = () => { processBulk(w => [...new Set(w)]); toast('Deduplicated'); };
+            $('dedupBtn').onclick = () => { processBulk(w => w.filter(x => x.length > 1)); toast('Cleaned'); };
             $('sortKwBtn').onclick = () => { processBulk(w => w.sort()); toast('Sorted'); };
-            $('cleanBtn').onclick = () => { processBulk(w => w.filter(x => x.length > 1)); toast('Cleaned'); };
+            $('cleanBtn').onclick = () => { processBulk(w => [...new Set(w)]); toast('Deduplicated'); };
             $('removeNumsKwBtn').onclick = () => { processBulk(w => w.map(x => x.replace(/\d/g, '')).filter(x => x)); toast('Numbers removed'); };
             $('insertPackBtn').onclick = () => { renderCatPicker(); openModal('catModal'); };
             $('pickMultBtn').onclick = () => { renderMultPicker(); openModal('multModal'); };
-
-            // Pack Indicator Dropdown
-            $('packIndicatorBtn').onclick = (e) => {
-                e.stopPropagation();
-                $('packIndicatorDrop').classList.toggle('hidden');
-            };
-            $('clearAllPacksBtn').onclick = (e) => {
-                e.stopPropagation();
-                S.insertedPacks = [];
-                $('bulkKw').value = '';
-                renderPackIndicator();
-                $('packIndicatorDrop').classList.add('hidden');
-                updateStats();
-                toast('Packs cleared');
-            };
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('#packIndicatorWrap')) {
-                    $('packIndicatorDrop')?.classList.add('hidden');
-                }
-            });
-
-            // Update keyword total count when textarea changes
-            $('bulkKw').addEventListener('input', updateStats);
 
             // Results
             $('copyAllBtn').onclick = () => { navigator.clipboard.writeText(S.domains.join('\n')); toast('Copied all'); };
@@ -3231,7 +3054,7 @@
             $('mainKw').value = '';
             $('bulkKw').value = '';
             S.insertedPacks = [];
-            renderPackIndicator();
+            renderInsertedPacks();
             updateStats();
             if ($('clear-res-check').checked) {
                 S.domains = [];
@@ -3269,26 +3092,11 @@
 
                 // Remove hyphens from all domains
                 S.domains = [...new Set(results.map(d => d.replace(/-/g, '')))];
-
-                // Initialize Availability State if enabled
-                S.genStates = {};
-                const checkEnabled = $('genCheckEnabled') && $('genCheckEnabled').checked;
-
-                if (checkEnabled) {
-                    S.domains.forEach(d => {
-                        S.genStates[d] = { status: 'pending', price: null };
-                    });
-                }
-
                 renderResults();
 
                 btnText.innerText = '✨ Generate Results';
                 spinner.classList.add('hidden');
                 toast(`Generated ${results.length} domains`);
-
-                if (checkEnabled && S.domains.length > 0) {
-                    startGenAvailabilityCheck();
-                }
             }, 400);
         }
 
@@ -3308,137 +3116,19 @@
             grid.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 pb-8">` +
                 S.domains.slice(0, 500).map(d => {
                     const isWin = S.winners.some(w => w.d === d);
-                    const state = S.genStates ? S.genStates[d] : null;
-
-                    let statusClass = 'border-slate-200 dark:border-slate-700';
-                    let statusIcon = '';
-                    let priceHtml = '';
-
-                    if (state) {
-                        if (state.status === 'available') {
-                            statusClass = 'border-green-500 bg-green-50 dark:bg-green-900/20';
-                            statusIcon = '<span class="text-green-600 dark:text-green-400 text-xs font-bold">AVAIL</span>';
-                            if (state.price) priceHtml = `<span class="text-xs font-bold text-slate-600 dark:text-slate-300">$${state.price}</span>`;
-                        } else if (state.status === 'taken') {
-                            statusClass = 'opacity-60 bg-slate-100 dark:bg-slate-800 border-slate-200';
-                            statusIcon = '<span class="text-slate-400 text-xs">TAKEN</span>';
-                        } else if (state.status === 'checking') {
-                            statusClass = 'border-purple-300 animate-pulse';
-                            statusIcon = '<span class="text-purple-500 text-xs">...</span>';
-                        } else if (state.status === 'error') {
-                            statusClass = 'border-red-200 bg-red-50';
-                            statusIcon = '<span class="text-red-500 text-xs">ERR</span>';
-                        }
-                    }
-
                     return `
-            <div class="group relative bg-white dark:bg-slate-800 border ${statusClass} rounded-xl p-3 hover:shadow-md transition-all hover:border-brand-300 dark:hover:border-brand-700 flex flex-col gap-2 animate-fade-in">
-                <div class="flex justify-between items-center">
-                    <span class="font-medium text-slate-700 dark:text-slate-200 truncate pr-2 select-all cursor-pointer" onclick="navigator.clipboard.writeText('${d}');toast('Copied')">${d}</span>
-                    <button onclick="toggleWinner('${d}')" class="${isWin ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'} transition-colors p-1" title="Save to Winners">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                    </button>
-                </div>
-                ${state ? `
-                <div class="flex justify-between items-center mt-auto border-t border-slate-100 dark:border-slate-700/50 pt-2">
-                    ${statusIcon}
-                    ${priceHtml}
-                    ${state.buyUrl ? `<a href="${state.buyUrl}" target="_blank" class="text-xs text-blue-500 hover:underline">Buy ↗</a>` : ''}
-                </div>` : ''}
+            <div class="group relative bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:shadow-md transition-all hover:border-brand-300 dark:hover:border-brand-700 flex justify-between items-center animate-fade-in">
+                <span class="font-medium text-slate-700 dark:text-slate-200 truncate pr-2 select-all cursor-pointer" onclick="navigator.clipboard.writeText('${d}');toast('Copied')">${d}</span>
+                <button onclick="toggleWinner('${d}')" class="${isWin ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'} transition-colors p-1" title="Save to Winners">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                </button>
             </div>`;
                 }).join('') + `</div>`;
         }
 
-        // Generator Availability Check Logic
-        async function startGenAvailabilityCheck() {
-            if (S.genChecking) return;
-            S.genChecking = true;
-            S.cancelGenCheck = false;
-            S.genCheckedCount = 0;
-            S.genAvailableCount = 0;
-
-            const concurrency = 5;
-            const targetAvailable = parseInt($('genTargetResults').value) || 50;
-            const maxChecks = parseInt($('genMaxChecks').value) || 500;
-
-            // Initial Progress Update
-            updateGenProgress();
-
-            const processQueue = async () => {
-                if (S.cancelGenCheck || S.genAvailableCount >= targetAvailable || S.genCheckedCount >= maxChecks) {
-                    S.genChecking = false;
-                    renderResults(); // Final render
-                    return;
-                }
-
-                // Find next pending
-                const pendingDomain = S.domains.find(d => S.genStates[d] && S.genStates[d].status === 'pending');
-                if (!pendingDomain) {
-                    S.genChecking = false;
-                    renderResults();
-                    return;
-                }
-
-                S.genStates[pendingDomain].status = 'checking';
-                // Optional: Render strictly every checking update might be too heavy?
-                // Let's rely on batch updates or progress bar for smoother feel
-                // renderResults(); 
-
-                try {
-                    const res = await checkDomain(pendingDomain);
-                    S.genStates[pendingDomain].status = res.available ? 'available' : 'taken';
-                    S.genStates[pendingDomain].price = res.price;
-                    S.genStates[pendingDomain].premium = res.premium;
-                    S.genStates[pendingDomain].buyUrl = res.buyUrl;
-
-                    if (res.available) S.genAvailableCount++;
-                } catch (e) {
-                    S.genStates[pendingDomain].status = 'error';
-                }
-
-                S.genCheckedCount++;
-                updateGenProgress();
-
-                // Optimized rendering: every 5 checks
-                if (S.genCheckedCount % 5 === 0) renderResults();
-
-                // Next
-                processQueue();
-            };
-
-            // Start workers
-            for (let i = 0; i < concurrency; i++) {
-                processQueue();
-            }
-        }
-
-        function updateGenProgress() {
-            const bar = $('genProgressBar');
-            const area = $('genProgressArea');
-            const txt = $('genProgressText');
-            const countAvail = $('genCountAvail');
-            const countChecked = $('genCountChecked');
-
-            if (!area) return;
-
-            if (S.genChecking) {
-                area.classList.remove('hidden');
-                const total = Math.min(S.domains.length, parseInt($('genMaxChecks').value) || 500);
-                const pct = Math.round((S.genCheckedCount / total) * 100);
-                // Cap at 100% visual
-                bar.style.width = `${Math.min(pct, 100)}%`;
-                txt.innerText = `${S.genCheckedCount} / ${total}`;
-                countAvail.innerText = S.genAvailableCount;
-                countChecked.innerText = S.genCheckedCount;
-            } else {
-                if (S.genCheckedCount > 0) {
-                    // Keep showing results if we did something
-                    bar.style.width = '100%';
-                } else {
-                    area.classList.add('hidden');
-                }
-            }
-        }
+        // ═══════════════════════════════════════════
+        // AI SCORING SYSTEM
+        // ═══════════════════════════════════════════
         const AI_SCORE_ENDPOINT = '/.netlify/functions/score';
         const AI_CHUNK_SIZE = 100; // Domains per request (max 120)
 
@@ -4249,6 +3939,7 @@
         // ═══════════════════════════════════════════
         let winnerEditIdx = null; // null = add new, number = editing index
         let winnerStatusFilter = 'all';
+        let winnerTldFilter = 'all';
 
         function toggleWinner(d) {
             const idx = S.winners.findIndex(w => w.d === d);
@@ -4276,14 +3967,38 @@
             const tbody = $('winnersTable');
             if (!tbody) return;
 
-            // Filter by search and status
+            // Filter by search, status, and TLD
             let list = S.winners.filter(w => {
                 const matchQ = w.d.toLowerCase().includes(q) ||
                     (w.category || '').toLowerCase().includes(q) ||
                     (w.notes || '').toLowerCase().includes(q);
                 const matchStatus = winnerStatusFilter === 'all' || w.status === winnerStatusFilter;
-                return matchQ && matchStatus;
+                const tld = w.d.substring(w.d.lastIndexOf('.'));
+                const matchTld = winnerTldFilter === 'all' || tld === winnerTldFilter;
+                return matchQ && matchStatus && matchTld;
             });
+
+            // Build TLD filter chips dynamically
+            const tldCounts = {};
+            S.winners.forEach(w => {
+                const tld = w.d.substring(w.d.lastIndexOf('.'));
+                if (tld) tldCounts[tld] = (tldCounts[tld] || 0) + 1;
+            });
+            const tldBar = $('winTldFilterBar');
+            const tldChips = $('winTldChips');
+            const uniqueTlds = Object.keys(tldCounts).sort();
+            if (uniqueTlds.length > 1) {
+                tldBar.classList.remove('hidden');
+                const activeClass = 'bg-slate-900 text-white dark:bg-white dark:text-slate-900';
+                const inactiveClass = 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200';
+                tldChips.innerHTML = `<button class="tld-filter text-[11px] px-2.5 py-1 rounded-full font-semibold transition-colors ${winnerTldFilter === 'all' ? activeClass : inactiveClass}" data-tld="all">All</button>` +
+                    uniqueTlds.map(tld => `<button class="tld-filter text-[11px] px-2.5 py-1 rounded-full font-semibold transition-colors ${winnerTldFilter === tld ? activeClass : inactiveClass}" data-tld="${tld}">${tld} <span class="opacity-60">(${tldCounts[tld]})</span></button>`).join('');
+                tldChips.querySelectorAll('.tld-filter').forEach(btn => {
+                    btn.onclick = () => { winnerTldFilter = btn.dataset.tld; renderWinners(); };
+                });
+            } else {
+                tldBar.classList.add('hidden');
+            }
 
             // Update count badge
             const badge = $('winCountBadge');
@@ -4624,7 +4339,23 @@
         function updateStats() {
             const words = $('bulkKw').value.split('\n').filter(s => s.trim());
             $('kwCount').innerText = words.length;
-            if ($('kwTotalCount')) $('kwTotalCount').innerText = words.length;
+
+            // Calculate and display duplicate count
+            const seen = new Set();
+            let dupeCount = 0;
+            words.forEach(w => {
+                const lower = w.trim().toLowerCase();
+                if (seen.has(lower)) dupeCount++;
+                else seen.add(lower);
+            });
+            const dupeEl = $('dupeCount');
+            if (dupeCount > 0) {
+                dupeEl.textContent = dupeCount + ' dupe' + (dupeCount !== 1 ? 's' : '');
+                dupeEl.classList.remove('hidden');
+            } else {
+                dupeEl.classList.add('hidden');
+            }
+
             $('hdrPacks').innerText = S.packs.length;
             $('packCountBadge').innerText = S.packs.length;
             let total = 0; S.packs.forEach(p => total += p.words.length);
@@ -4640,65 +4371,64 @@
     `).join('');
         }
 
-        // Track inserted packs
-        if (!S.insertedPacks) S.insertedPacks = [];
-
-        function renderPackIndicator() {
-            const wrap = $('packIndicatorWrap');
-            const countEl = $('packIndicatorCount');
-            const list = $('packIndicatorList');
-            const packs = S.insertedPacks || [];
-
-            if (packs.length === 0) {
-                wrap.classList.add('hidden');
-                return;
-            }
-            wrap.classList.remove('hidden');
-            countEl.textContent = packs.length;
-
-            list.innerHTML = packs.map((entry, i) => `
-                <div class="flex items-center justify-between px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 group">
-                    <div>
-                        <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">${entry.name}</div>
-                        <div class="text-[10px] text-slate-400">${entry.wordCount} words</div>
-                    </div>
-                    <button onclick="removeInsertedPack(${i})" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 text-xs font-bold transition-opacity px-1">×</button>
-                </div>
-            `).join('');
-        }
-
-        function removeInsertedPack(index) {
-            if (!S.insertedPacks) return;
-            S.insertedPacks.splice(index, 1);
-            renderPackIndicator();
-            // Close dropdown if empty
-            if (S.insertedPacks.length === 0) {
-                $('packIndicatorDrop').classList.add('hidden');
-            }
-        }
-
         function insertPack(id) {
             const p = S.packs.find(x => x.id === id);
             const mode = document.querySelector('#insertModeGrp .on').dataset.v;
             const txt = p.words.join('\n');
-            if (mode === 'replace') {
-                $('bulkKw').value = txt;
-                S.insertedPacks = [{ id: p.id, name: p.name, wordCount: p.words.length }];
-            } else {
-                $('bulkKw').value += (($('bulkKw').value.trim() ? '\n' : '') + txt);
-                if (!S.insertedPacks) S.insertedPacks = [];
-                // Avoid duplicate entries for same pack
-                const exists = S.insertedPacks.findIndex(x => x.id === p.id);
-                if (exists >= 0) {
-                    S.insertedPacks[exists].wordCount = p.words.length;
-                } else {
-                    S.insertedPacks.push({ id: p.id, name: p.name, wordCount: p.words.length });
-                }
-            }
+            if (mode === 'replace') $('bulkKw').value = txt;
+            else $('bulkKw').value += '\n' + txt;
 
-            renderPackIndicator();
+            // Track inserted pack
+            S.insertedPacks.push({ id: p.id, name: p.name, wordCount: p.words.length, words: [...p.words] });
+            renderInsertedPacks();
+
             closeModal('catModal');
             updateStats();
+        }
+
+        function removeInsertedPack(index) {
+            const pack = S.insertedPacks[index];
+            if (!pack) return;
+
+            // Remove this pack's keywords from textarea
+            const currentWords = $('bulkKw').value.split('\n').map(s => s.trim()).filter(s => s);
+            const packWords = new Set(pack.words.map(w => w.toLowerCase()));
+            const remaining = currentWords.filter(w => !packWords.delete(w.toLowerCase()));
+            $('bulkKw').value = remaining.join('\n');
+
+            // Remove from tracking
+            S.insertedPacks.splice(index, 1);
+            renderInsertedPacks();
+            updateStats();
+            toast(`Removed "${pack.name}" and its keywords`);
+        }
+
+        function renderInsertedPacks() {
+            const dropdown = $('insertedPacksDropdown');
+            const label = $('insertedPacksLabel');
+            const list = $('insertedPacksList');
+
+            if (S.insertedPacks.length === 0) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            dropdown.classList.remove('hidden');
+            const totalWords = S.insertedPacks.reduce((s, p) => s + p.wordCount, 0);
+            label.textContent = `${S.insertedPacks.length} Pack${S.insertedPacks.length !== 1 ? 's' : ''} Inserted · ${totalWords} words`;
+
+            list.innerHTML = S.insertedPacks.map((p, i) => `
+                <div class="flex items-center justify-between px-3 py-2 border-b border-slate-100 dark:border-slate-700 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-xs">📦</span>
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">${p.name}</span>
+                        <span class="text-[10px] font-mono bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded flex-shrink-0">${p.wordCount}</span>
+                    </div>
+                    <button onclick="removeInsertedPack(${i})" class="text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded p-1 transition-colors flex-shrink-0" title="Remove pack">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                </div>
+            `).join('');
         }
 
         function renderMultPicker() {
@@ -4798,104 +4528,48 @@
             const reader = new FileReader();
             reader.onload = function (ev) {
                 try {
-                    const json = JSON.parse(ev.target.result);
-                    let packsToProcess = [];
-
-                    // 1. Standard Array: [ {name, words}, ... ]
-                    if (Array.isArray(json)) {
-                        packsToProcess = json;
-                    }
-                    // 2. Object wrapper: { packs: [ ... ] }
-                    else if (json.packs && Array.isArray(json.packs)) {
-                        packsToProcess = json.packs;
-                    }
-                    // 3. Single Pack Object: { name: "X", words: [...] }
-                    else if (typeof json === 'object' && json.name && Array.isArray(json.words)) {
-                        packsToProcess = [json];
-                    }
-                    // 4. Dictionary / Map: { "PackName": ["word1", "word2"], "OtherPack": [...] }
-                    else if (typeof json === 'object') {
-                        // Iterate keys and try to construct packs
-                        Object.entries(json).forEach(([key, val]) => {
-                            if (Array.isArray(val) && val.every(v => typeof v === 'string')) {
-                                packsToProcess.push({ name: key, words: val, type: 'keyword' });
-                            }
-                        });
-
-                        // If that failed, fall back to "smart search" for nested arrays of objects
-                        if (packsToProcess.length === 0) {
-                            const possibleKey = Object.keys(json).find(k => Array.isArray(json[k]) && json[k][0]?.words);
-                            if (possibleKey) packsToProcess = json[possibleKey];
-                        }
-                    }
-
-                    console.log('Found packs to process:', packsToProcess.length, packsToProcess);
-
-                    if (packsToProcess.length > 0) {
+                    const imported = JSON.parse(ev.target.result);
+                    if (Array.isArray(imported)) {
                         let mergedCount = 0;
                         let createdCount = 0;
-                        let totalWordsAdded = 0;
 
-                        packsToProcess.forEach(p => {
+                        imported.forEach(p => {
                             if (p.name && p.words && Array.isArray(p.words)) {
-                                const cleanName = p.name.trim();
-                                // Find existing pack with same name (exclude case sensitivity for matching)
+                                // Find existing pack with same name (case-insensitive)
                                 const existingPack = S.packs.find(
-                                    ep => ep.name.trim().toLowerCase() === cleanName.toLowerCase()
+                                    ep => ep.name.toLowerCase() === p.name.toLowerCase()
                                 );
 
                                 if (existingPack) {
-                                    // MERGE
-                                    const oldWords = new Set(existingPack.words.map(w => w.toLowerCase()));
-                                    const newWords = p.words.filter(w => w && typeof w === 'string').map(w => w.trim());
-                                    let addedForThis = 0;
-
-                                    newWords.forEach(w => {
-                                        if (!oldWords.has(w.toLowerCase())) {
-                                            existingPack.words.push(w);
-                                            oldWords.add(w.toLowerCase());
-                                            addedForThis++;
-                                        }
-                                    });
-
-                                    existingPack.words.sort(); // Keep sorted
-
-                                    if (addedForThis > 0) {
-                                        mergedCount++;
-                                        totalWordsAdded += addedForThis;
-                                    }
+                                    // Merge keywords: combine and deduplicate
+                                    const combined = [...existingPack.words, ...p.words];
+                                    existingPack.words = [...new Set(combined.map(w => w.toLowerCase().trim()))];
+                                    mergedCount++;
                                 } else {
-                                    // CREATE
-                                    S.packs.push({
-                                        id: Date.now() + Math.random(),
-                                        name: cleanName,
-                                        type: p.type || 'keyword',
-                                        words: p.words.filter(w => w && typeof w === 'string').map(w => w.trim()).sort()
-                                    });
+                                    // Create new pack
+                                    p.id = Date.now() + Math.random();
+                                    S.packs.push(p);
                                     createdCount++;
-                                    totalWordsAdded += p.words.length;
                                 }
                             }
                         });
-
                         save();
                         refreshAll();
 
-                        if (createdCount === 0 && mergedCount === 0) {
-                            toast('No new data found imported (duplicates skipped).');
-                        } else {
-                            toast(`Success! Created ${createdCount}, Merged ${mergedCount}. (+${totalWordsAdded} words)`);
-                        }
+                        // Show summary message
+                        const parts = [];
+                        if (mergedCount > 0) parts.push(`${mergedCount} merged`);
+                        if (createdCount > 0) parts.push(`${createdCount} created`);
+                        toast(parts.length > 0 ? `Packs: ${parts.join(', ')}` : 'No valid packs found');
                     } else {
-                        toast('No recognizable pack format found.', 'err');
+                        toast('Invalid file format', 'err');
                     }
                 } catch (err) {
-                    console.error('Import Error:', err);
-                    toast('Error parsing JSON. Check console.', 'err');
+                    toast('Error reading file', 'err');
                 }
             };
             reader.readAsText(file);
-            e.target.value = ''; // Reset input to allow re-importing same file
+            e.target.value = ''; // Reset input
         }
 
         function importCSV(e) {
@@ -5010,13 +4684,6 @@
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 const file = files[0];
-
-                // FIX: Detect JSON and route to importPacks
-                if (file.name.toLowerCase().endsWith('.json') || file.type === 'application/json') {
-                    importPacks({ target: { files: [file] } });
-                    return;
-                }
-
                 const reader = new FileReader();
                 reader.onload = function (ev) {
                     const lines = ev.target.result.split(/[\n\r]+/).map(l => l.trim()).filter(l => l);
@@ -5131,16 +4798,16 @@
 
                 if (index >= 0) {
                     select.value = index;
-                    onPresetSelectChange(true);
+                    onPresetSelectChange();
                 } else if (select.options.length > 0) {
                     select.value = 0;
-                    onPresetSelectChange(true);
+                    onPresetSelectChange();
                 }
             } else {
                 // Default to first
                 if (select.options.length > 0) {
                     select.value = 0;
-                    onPresetSelectChange(true);
+                    onPresetSelectChange();
                 }
             }
         }
@@ -5163,17 +4830,17 @@
             }
         }
 
-        function onPresetSelectChange(silent = false) {
+        function onPresetSelectChange() {
             const select = $('autoPresetSelect');
             if (!select) return; // Element doesn't exist, skip
             const idx = select.value;
             if (idx === '') return;
             const presets = getAutoPresets();
             const preset = presets[idx];
-            if (preset) applyAutoPreset(preset, silent);
+            if (preset) applyAutoPreset(preset);
         }
 
-        function applyAutoPreset(preset, silent = false) {
+        function applyAutoPreset(preset) {
             if (!preset) return;
 
             // Helper for safe property setting
@@ -5212,7 +4879,7 @@
 
             // Ideally should update multipliers list or store for Agent
             // For now, toast
-            if (!silent) toast(`Applied preset: ${preset.name}`);
+            toast(`Applied preset: ${preset.name}`);
         }
 
         // ═══════════════════════════════════════════
@@ -5602,302 +5269,6 @@
             e.target.value = '';
         }
 
-        // ═══════════════════════════════════════════
-        // AUTOMATION & AVAILABILITY CHECKING
-        // ═══════════════════════════════════════════
-
-        // State for automation
-        S.autoResults = [];
-        S.checking = false;
-        S.cancelCheck = false;
-        S.checkQueue = [];
-        S.checkedCount = 0;
-        S.availableCount = 0;
-
-        async function autoGenerate() {
-            const presetIdx = $('autoPresetSelect').value;
-            if (presetIdx === '') { toast('Please select a preset', 'err'); return; }
-
-            const presets = getAutoPresets();
-            const preset = presets[presetIdx];
-            if (!preset) return;
-
-            // Get inputs
-            const mainKw = $('mainKw').value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-            if (!mainKw) { toast('Please enter a main keyword (top left)', 'err'); return; }
-
-            // UI Update
-            const btn = $('autoGenerateBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '🚀 Generating...';
-            btn.disabled = true;
-
-            // Generate Domains based on Preset
-            // 1. Collect words from packs (Multipliers)
-            // Note: In a real app, we might select specific packs. Here we use ALL multipliers for variety.
-            const multipliers = S.packs.filter(p => p.type === 'multiplier').flatMap(p => p.words);
-
-            // 2. Generate candidates
-            let candidates = new Set();
-            const templates = preset.templates || ['A+B'];
-            const prefixes = (preset.recommendedPrefixes || []).concat(['get', 'try', 'go', 'use', 'my', 'the']);
-            const suffixes = (preset.recommendedSuffixes || []).concat(['app', 'hq', 'io', 'co', 'site']);
-
-            // Helper to add if valid
-            const add = (d) => {
-                if (!d) return;
-                // Constraints
-                const maxLen = parseInt($('autoMaxLen').value) || 12;
-                if (d.length > maxLen) return;
-                if ($('autoNoHyphens').checked && d.includes('-')) return;
-                if ($('autoNoNumbers').checked && /\d/.test(d)) return;
-                // Banned
-                const banned = $('autoBanned').value.split('\n').filter(s => s.trim());
-                if (banned.some(b => d.includes(b.trim()))) return;
-
-                candidates.add(d);
-            };
-
-            // A = mainKw, B = multiplier/suffix/prefix
-            // Logic: Mix mainKw with multipliers and affixes
-
-            // Speed optimization: limit multipliers if too many
-            const safeMults = multipliers.length > 200 ? multipliers.sort(() => 0.5 - Math.random()).slice(0, 200) : multipliers;
-
-            templates.forEach(tpl => {
-                if (tpl === 'A+B') {
-                    safeMults.forEach(m => add(mainKw + m));
-                }
-                if (tpl === 'B+A') {
-                    safeMults.forEach(m => add(m + mainKw));
-                }
-                if (tpl === 'A+suffix') {
-                    suffixes.forEach(s => add(mainKw + s));
-                }
-                if (tpl === 'prefix+A') {
-                    prefixes.forEach(p => add(p + mainKw));
-                }
-                if (tpl === 'prefix+A+B') {
-                    prefixes.forEach(p => {
-                        safeMults.slice(0, 50).forEach(m => add(p + mainKw + m));
-                    });
-                }
-                if (tpl === 'A+B+suffix') {
-                    suffixes.forEach(s => {
-                        safeMults.slice(0, 50).forEach(m => add(mainKw + m + s));
-                    });
-                }
-            });
-
-            // Convert to array and shuffle/sort
-            let results = Array.from(candidates);
-            if ($('autoAvoidUgly').checked) {
-                // Simple heuristic: avoid 3 consonants in a row (unless valid word)
-                // results = results.filter(d => !/[bcdfghjklmnpqrstvwxyz]{4,}/.test(d)); 
-            }
-
-            results = results.sort(() => 0.5 - Math.random()); // Shuffle
-
-            // Limit to Max Checks
-            const maxChecks = parseInt($('autoMaxChecks').value) || 500;
-            results = results.slice(0, maxChecks);
-
-            // Populate Check Queue
-            S.autoResults = results.map(d => ({
-                domain: d + '.com', // Default to .com for now, or allow TLD selection?
-                status: 'pending', // pending, available, taken, error
-                price: null,
-                checked: false
-            }));
-
-            // Initial Render
-            renderAutoResults();
-
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-
-            // Start Checking if enabled
-            if (results.length > 0) {
-                startAvailabilityCheck();
-            } else {
-                toast('No domains generated. Try different settings.', 'err');
-            }
-        }
-
-        function renderAutoResults() {
-            const grid = $('autoResultsGrid');
-            const countEl = $('autoResCount');
-            if (!grid) return;
-
-            if (countEl) countEl.innerText = S.autoResults.length;
-
-            if (S.autoResults.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-12 text-center text-slate-400">Generated domains will appear here...</div>';
-                return;
-            }
-
-            // Render limit to avoid freezing
-            const limit = 200;
-            const toRender = S.autoResults.slice(0, limit);
-
-            grid.innerHTML = toRender.map(r => {
-                let statusClass = 'border-slate-200 dark:border-slate-700';
-                let statusIcon = '';
-                let priceHtml = '';
-
-                if (r.status === 'available') {
-                    statusClass = 'border-green-500 bg-green-50 dark:bg-green-900/20';
-                    statusIcon = '<span class="text-green-600 dark:text-green-400 text-xs font-bold">AVAIL</span>';
-                    if (r.price) priceHtml = `<span class="text-xs font-bold text-slate-600 dark:text-slate-300">$${r.price}</span>`;
-                } else if (r.status === 'taken') {
-                    statusClass = 'opacity-60 bg-slate-100 dark:bg-slate-800 border-slate-200';
-                    statusIcon = '<span class="text-slate-400 text-xs">TAKEN</span>';
-                } else if (r.status === 'checking') {
-                    statusClass = 'border-purple-300 animate-pulse';
-                    statusIcon = '<span class="text-purple-500 text-xs">...</span>';
-                } else if (r.status === 'error') {
-                    statusClass = 'border-red-200 bg-red-50';
-                    statusIcon = '<span class="text-red-500 text-xs">ERR</span>';
-                }
-
-                // Is it a winner? (Check matches against winners list)
-                const isWin = S.winners.some(w => w.d === r.domain);
-
-                return `
-                <div class="group relative p-3 rounded-lg border ${statusClass} transition-all hover:shadow-sm flex flex-col gap-2">
-                    <div class="flex justify-between items-start">
-                        <div class="font-mono text-sm font-bold text-slate-700 dark:text-slate-200 break-all cursor-pointer hover:text-purple-600" onclick="navigator.clipboard.writeText('${r.domain}');toast('Copied')">
-                            ${r.domain}
-                        </div>
-                        <button onclick="toggleWinner('${r.domain}')" class="${isWin ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'} transition-colors" title="Save">
-                            ★
-                        </button>
-                    </div>
-                    <div class="flex justify-between items-center mt-auto">
-                        ${statusIcon}
-                        ${priceHtml}
-                        ${r.buyUrl ? `<a href="${r.buyUrl}" target="_blank" class="text-xs text-blue-500 hover:underline">Buy ↗</a>` : ''}
-                    </div>
-                </div>`;
-            }).join('');
-
-            if (S.autoResults.length > limit) {
-                grid.innerHTML += `<div class="col-span-full text-center text-xs text-slate-400 py-2">Showing first ${limit} of ${S.autoResults.length} results. Export to see all.</div>`;
-            }
-        }
-
-        async function startAvailabilityCheck() {
-            if (S.checking) return;
-            S.checking = true;
-            S.cancelCheck = false;
-            S.checkedCount = 0;
-            S.availableCount = 0;
-
-            const concurrency = 5;
-            const targetAvailable = parseInt($('autoTargetResults').value) || 50;
-
-            // Update UI
-            // Show progress bar
-
-            const processQueue = async () => {
-                if (S.cancelCheck || S.availableCount >= targetAvailable) {
-                    S.checking = false;
-                    renderAutoResults(); // Final render
-                    return;
-                }
-
-                // Find next pending
-                const pendingIdx = S.autoResults.findIndex(r => r.status === 'pending');
-                if (pendingIdx === -1) {
-                    S.checking = false;
-                    renderAutoResults();
-                    return;
-                }
-
-                const item = S.autoResults[pendingIdx];
-                item.status = 'checking';
-                renderAutoResults(); // Update specific row? Too slow. result-specific update better.
-
-                try {
-                    const res = await checkDomain(item.domain);
-                    item.status = res.available ? 'available' : 'taken';
-                    item.price = res.price;
-                    item.premium = res.premium;
-                    item.buyUrl = res.buyUrl;
-
-                    if (res.available) S.availableCount++;
-                } catch (e) {
-                    item.status = 'error';
-                }
-
-                S.checkedCount++;
-                updateProgress(); // Update progress bar
-
-                // Optimized rendering: only re-render every X items or on finish
-                if (S.checkedCount % 5 === 0) renderAutoResults();
-
-                // Next
-                processQueue();
-            };
-
-            // Start workers
-            for (let i = 0; i < concurrency; i++) {
-                processQueue();
-            }
-        }
-
-        async function checkDomain(domain) {
-            try {
-                const res = await fetch('/.netlify/functions/check-domain', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ domain })
-                });
-                return await res.json();
-            } catch (e) {
-                console.error(e);
-                return { available: false, error: true };
-            }
-        }
-
-        function updateProgress() {
-            const bar = $('autoProgressBar');
-            const area = $('autoProgressArea');
-            const txt = $('autoProgressText');
-            const countAvail = $('autoCountAvail');
-            const countChecked = $('autoCountChecked');
-
-            if (!area) return;
-
-            if (S.checking) {
-                area.classList.remove('hidden');
-                const total = S.autoResults.length;
-                const pct = Math.round((S.checkedCount / total) * 100);
-                bar.style.width = `${pct}%`;
-                txt.innerText = `${S.checkedCount} / ${total}`;
-                countAvail.innerText = S.availableCount;
-                countChecked.innerText = S.checkedCount;
-            } else {
-                // Keep showing results summary but maybe hide bar functionality?
-                // For now, keep it visible if we have results
-                bar.style.width = '100%';
-                // area.classList.add('hidden'); 
-            }
-        }
-
-        // Stubs for missing funcs
-        function autoScoreAI() { toast('AI Scoring coming soon!'); }
-        function autoRunAgent() { toast('AI Agent coming soon!'); }
-        function copyAutoDomains() {
-            const text = S.autoResults.filter(r => r.status === 'available').map(r => r.domain).join('\n');
-            navigator.clipboard.writeText(text);
-            toast('Copied available domains');
-        }
-        function exportAutoCSV() {
-            const rows = S.autoResults.map(r => [r.domain, r.status, r.price || '']);
-            downloadCSV(rows, 'auto-domains.csv');
-        }
-
         // Stub functions for missing weight slider features
         function onWeightSliderChange() {
             // Stub - weight slider functionality not yet implemented
@@ -6032,7 +5403,7 @@
         };
 
         // Update UI based on auth state
-        function updateAuthUI(user, silent = false) {
+        function updateAuthUI(user) {
             const loginBtn = $('loginBtn');
             const userInfo = $('userInfo');
             const userEmail = $('userEmail');
@@ -6050,7 +5421,7 @@
 
                 // Fetch winners from protected API
                 if (!AuthState.winnersLoaded) {
-                    fetchProtectedWinners(silent);
+                    fetchProtectedWinners();
                 }
             } else {
                 // Logged out
@@ -6068,10 +5439,10 @@
         }
 
         // Fetch winners from protected Netlify Function
-        async function fetchProtectedWinners(silent = false) {
+        async function fetchProtectedWinners() {
             const user = netlifyIdentity.currentUser();
             if (!user) {
-                if (!silent) toast('Please log in to view winners', 'err');
+                toast('Please log in to view winners', 'err');
                 return;
             }
 
@@ -6096,7 +5467,7 @@
                 // Render winners to table
                 if (data.winners && Array.isArray(data.winners)) {
                     renderProtectedWinners(data.winners);
-                    if (!silent) toast(`Loaded ${data.winners.length} winners`);
+                    toast(`Loaded ${data.winners.length} winners`);
                 }
             } catch (err) {
                 console.error('Failed to fetch winners:', err);
@@ -6150,7 +5521,7 @@
         if (typeof netlifyIdentity !== 'undefined') {
             // On initial page load
             netlifyIdentity.on('init', user => {
-                updateAuthUI(user, true); // Silent on init
+                updateAuthUI(user);
             });
 
             // On login
